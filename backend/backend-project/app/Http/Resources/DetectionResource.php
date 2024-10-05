@@ -23,16 +23,7 @@ class DetectionResource extends JsonResource
         return [
             'success'   => $this->status,
             'message'   => $this->message,
-            'data'      => [
-                'detection_id' => $this->detection_id,
-                'user_id' => $this->user_id,
-                'image_url' => $this->image_url,
-                'disease_detected' => $this->disease_detected,
-                'recommendation' => $this->recommendation,
-                'detected_at' => $this->detected_at,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
-            ]
+            'data'      => $this->resource,
         ];
     }
 }

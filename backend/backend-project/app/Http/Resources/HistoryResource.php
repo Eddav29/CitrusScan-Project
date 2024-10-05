@@ -23,14 +23,7 @@ class HistoryResource extends JsonResource
         return [
             'success'   => $this->status,
             'message'   => $this->message,
-            'data'      => [
-                'history_id' => $this->history_id,
-                'user_id' => $this->user_id,
-                'detection_id' => $this->detection_id,
-                'saved_at' => $this->saved_at,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
-            ]
+            'data'      => $this->resource,
         ];
     }
 }
