@@ -12,7 +12,9 @@ class HistoryController extends Controller
     //
     public function index()
     {
-        $histories = history::all();
+        $histories = history::latest()->pagination(5);
         return new HistoryResource(true, 'Histories retrieved successfully', $histories);
     }
+
+    
 }
