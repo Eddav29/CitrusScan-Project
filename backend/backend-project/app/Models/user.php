@@ -2,70 +2,46 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use Notifiable, HasFactory;
+    use HasFactory, Notifiable;
 
-    protected $table = 'users';
-    
-    public $incrementing = false;
-    protected $primaryKey = 'user_id';
-    protected $keyType = 'string';
-
-    // Attributes that are mass assignable
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'user_id', 'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
-    // Hide password from array or JSON
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    // Automatically generate UUID for user_id on model creation
-    protected static function boot()
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (!$model->user_id) {
-                $model->user_id = (string) Str::uuid();
-            }
-        });
-    }
-
-    // Hash password when setting
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = bcrypt($value);
-    }
-
-    // Relationships
-    public function detections()
-    {
-        return $this->hasMany(Detection::class, 'user_id', 'user_id');
-    }
-
-    public function histories()
-    {
-        return $this->hasMany(History::class, 'user_id', 'user_id');
-    }
-
-    // JWT implementation
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }
