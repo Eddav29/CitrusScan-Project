@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/navigation_bar.dart';
 import 'tips_widget.dart';
-import 'recent_scan_widget.dart'; // Pastikan sudah mengimpor recent_scan_widget
+import 'recent_scan_widget.dart';
 import 'data_jeruk_widget.dart';
 import '../widgets/app_bar.dart';
+import 'scan_history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,9 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Color appBarColor = Colors.transparent; // Warna AppBar
+  Color appBarColor = Colors.transparent;
 
-  // Sample data for the oranges
+  // Data dummy untuk riwayat jeruk
   final List<Map<String, String>> jerukData = [
     {
       "namaJeruk": "Jeruk Manis",
@@ -37,18 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-  // Function to build rows of DataJerukWidget
   List<Widget> buildJerukRows() {
     List<Widget> rows = [];
     for (int i = 0; i < jerukData.length; i += 2) {
-      // Check if the next item exists for pairing
       DataJerukWidget leftCard = DataJerukWidget(
         namaJeruk: jerukData[i]["namaJeruk"]!,
         tanggalScan: jerukData[i]["tanggalScan"]!,
         imagePath: jerukData[i]["imagePath"]!,
       );
 
-      // Check if there is a right card
       DataJerukWidget rightCard = (i + 1 < jerukData.length)
           ? DataJerukWidget(
               namaJeruk: jerukData[i + 1]["namaJeruk"]!,
@@ -62,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
 
       rows.add(JerukRowWidget(leftCard: leftCard, rightCard: rightCard));
-      rows.add(SizedBox(height: 10)); // Spacing between rows
+      rows.add(SizedBox(height: 10));
     }
     return rows;
   }
@@ -129,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Selamat datang di CitrusScan, solusi untuk mendeteksi dan menganalisis jeruk dengan cepat dan mudah.",
                     style: TextStyle(
                       fontSize: 16,
-                      fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                      fontFamily: 'Gilroy',
                     ),
                   ),
                   SizedBox(height: 20),
@@ -146,19 +144,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
-                          fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                          fontFamily: 'Gilroy',
                         ),
                       ),
-                      // Ikon untuk melihat selengkapnya
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFF215C3C), // Warna hijau
-                          shape: BoxShape.circle, // Bentuk bulat
+                          color: Color(0xFF215C3C),
+                          shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: Icon(Icons.arrow_forward, color: Colors.white),
                           onPressed: () {
-                            print("Lihat Selengkapnya tapped");
+                            // Pindah ke halaman riwayat scan lengkap
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ScanHistoryScreen(),
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -177,14 +180,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                          fontFamily: 'Gilroy',
                         ),
                       ),
-                      // Ikon untuk melihat selengkapnya
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFF215C3C), // Warna hijau
-                          shape: BoxShape.circle, // Bentuk bulat
+                          color: Color(0xFF215C3C),
+                          shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: Icon(Icons.arrow_forward, color: Colors.white),
@@ -206,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: CustomNavigationBar(), // Navigasi bawah
+      bottomNavigationBar: CustomNavigationBar(),
     );
   }
 }
