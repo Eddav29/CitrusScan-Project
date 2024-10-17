@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:citrus_scan/screen/camera_screen.dart'; // Pastikan ini sudah diimport
+import 'package:citrus_scan/screen/camera_screen.dart'; // Import CameraScreen
+import 'package:citrus_scan/screen/scan_result_screen.dart'; // Import ScanResultScreen
 
 class CustomNavigationBar extends StatefulWidget {
   @override
@@ -24,10 +25,14 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
             // Penanganan navigasi untuk Home dan Profile
             if (index == 0) {
               print('Home ditekan');
-              // Navigasi ke halaman Home
+              // Navigasi ke halaman Home (Anda dapat menambahkan logika navigasi jika diperlukan)
             } else if (index == 1) {
               print('Profile ditekan');
-              // Navigasi ke halaman Profile
+              // Navigasi ke halaman Scan Result Screen saat profil ditekan
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ScanResultScreen()), // Navigasi ke ScanResultScreen
+              );
             }
           },
           items: [

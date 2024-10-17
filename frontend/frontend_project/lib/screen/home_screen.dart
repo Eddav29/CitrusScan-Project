@@ -13,6 +13,60 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Color appBarColor = Colors.transparent; // Warna AppBar
 
+  // Sample data for the oranges
+  final List<Map<String, String>> jerukData = [
+    {
+      "namaJeruk": "Jeruk Manis",
+      "tanggalScan": "2 Okt 2024",
+      "imagePath": 'assets/images/jeruk1.png',
+    },
+    {
+      "namaJeruk": "Jeruk Nipis",
+      "tanggalScan": "10 Okt 2024",
+      "imagePath": 'assets/images/jeruknipis.jpeg',
+    },
+    {
+      "namaJeruk": "Jeruk Bali",
+      "tanggalScan": "12 Okt 2024",
+      "imagePath": 'assets/images/jeruk1.png',
+    },
+    {
+      "namaJeruk": "Jeruk Keprok",
+      "tanggalScan": "15 Okt 2024",
+      "imagePath": 'assets/images/jeruknipis.jpeg',
+    },
+  ];
+
+  // Function to build rows of DataJerukWidget
+  List<Widget> buildJerukRows() {
+    List<Widget> rows = [];
+    for (int i = 0; i < jerukData.length; i += 2) {
+      // Check if the next item exists for pairing
+      DataJerukWidget leftCard = DataJerukWidget(
+        namaJeruk: jerukData[i]["namaJeruk"]!,
+        tanggalScan: jerukData[i]["tanggalScan"]!,
+        imagePath: jerukData[i]["imagePath"]!,
+      );
+
+      // Check if there is a right card
+      DataJerukWidget rightCard = (i + 1 < jerukData.length)
+          ? DataJerukWidget(
+              namaJeruk: jerukData[i + 1]["namaJeruk"]!,
+              tanggalScan: jerukData[i + 1]["tanggalScan"]!,
+              imagePath: jerukData[i + 1]["imagePath"]!,
+            )
+          : DataJerukWidget(
+              namaJeruk: "",
+              tanggalScan: "",
+              imagePath: "",
+            );
+
+      rows.add(JerukRowWidget(leftCard: leftCard, rightCard: rightCard));
+      rows.add(SizedBox(height: 10)); // Spacing between rows
+    }
+    return rows;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Teks selamat datang
                   Text(
                     "Selamat datang di CitrusScan, solusi untuk mendeteksi dan menganalisis jeruk dengan cepat dan mudah.",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                    ),
                   ),
                   SizedBox(height: 20),
                   // Widget tips
@@ -89,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
+                          fontFamily: 'Gilroy', // Menggunakan font Gilroy
                         ),
                       ),
                       // Ikon untuk melihat selengkapnya
@@ -116,7 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         "Data Jeruk Saya",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                        ),
                       ),
                       // Ikon untuk melihat selengkapnya
                       Container(
@@ -134,22 +196,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  // Menampilkan data jeruk
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      DataJerukWidget(
-                        namaJeruk: "Jeruk Manis",
-                        tanggalScan: "2 Okt 2024", // Tanggal scan
-                        imagePath: 'assets/images/jeruk1.png',
-                      ),
-                      SizedBox(width: 10),
-                      DataJerukWidget(
-                        namaJeruk: "Jeruk Nipis",
-                        tanggalScan: "10 Okt 2024", // Tanggal scan
-                        imagePath: 'assets/images/jeruknipis.jpeg',
-                      ),
-                    ],
+                  // Menampilkan semua data jeruk
+                  Column(
+                    children: buildJerukRows(),
                   ),
                 ],
               ),
