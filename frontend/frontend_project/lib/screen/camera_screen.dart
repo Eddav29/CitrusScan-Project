@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'loading_screen.dart'; // Impor loading screen
 
 class CameraScreen extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class _CameraScreenState extends State<CameraScreen> {
   List<CameraDescription>? cameras;
   String? imagePath;
   bool isCameraInitialized = false; // Menyimpan status inisialisasi kamera
+  bool isLoading = false; // Menyimpan status loading
 
   @override
   void initState() {
@@ -42,13 +44,24 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> takePicture() async {
     if (_cameraController!.value.isInitialized) {
+      setState(() {
+        isLoading = true; // Mulai loading
+      });
+
       try {
         final XFile image = await _cameraController!.takePicture();
         setState(() {
           imagePath = image.path; // Simpan path gambar yang diambil
         });
+
+        // Simulasi loading dengan delay
+        await Future.delayed(Duration(seconds: 2));
       } catch (e) {
         print(e); // Tangani error jika terjadi
+      } finally {
+        setState(() {
+          isLoading = false; // Selesai loading
+        });
       }
     }
   }
@@ -59,19 +72,22 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(title: Text('Camera')),
       body: Column(
         children: [
-          if (!isCameraInitialized) // Jika kamera belum diinisialisasi
-            ElevatedButton(
-              onPressed: initializeCamera,
-              child: Text('Buka Kamera'),
-            ),
-          if (isCameraInitialized) ...[
-            Expanded(child: CameraPreview(_cameraController!)),
-            ElevatedButton(
-              onPressed: takePicture,
-              child: Text('Ambil Foto'),
-            ),
-            if (imagePath != null) // Jika gambar sudah diambil, tampilkan
-              Image.file(File(imagePath!)),
+          if (isLoading) LoadingScreen(), // Tampilkan loading screen
+          if (!isLoading) ...[
+            if (!isCameraInitialized) // Jika kamera belum diinisialisasi
+              ElevatedButton(
+                onPressed: initializeCamera,
+                child: Text('Buka Kamera'),
+              ),
+            if (isCameraInitialized) ...[
+              Expanded(child: CameraPreview(_cameraController!)),
+              ElevatedButton(
+                onPressed: takePicture,
+                child: Text('Ambil Foto'),
+              ),
+              if (imagePath != null) // Jika gambar sudah diambil, tampilkan
+                Image.file(File(imagePath!)),
+            ],
           ],
         ],
       ),
