@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
 class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -44,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: IconButton(
                     icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)), // Change color
                     onPressed: () {
-                      Navigator.pushNamed(context, '/'); // Navigate back to splash screen
+                      context.go('/'); // Navigate back to the previous screen
                     },
                   ),
                 ),
@@ -193,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Text("Sudah punya akun?"),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/login'); // Navigate to Login
+                          context.go('/login');
                         },
                         child: Text(
                           "Masuk",

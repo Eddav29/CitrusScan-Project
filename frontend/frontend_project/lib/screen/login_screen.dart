@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: IconButton(
                     icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)), // Change color
                     onPressed: () {
-                      Navigator.pushNamed(context, '/'); // Navigate to splash screen
+                      GoRouter.of(context).go('/');
                     },
                   ),
                 ),
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         // Navigate to /home route
-                        Navigator.pushNamed(context, '/home');
+                        context.go('/home');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF215C3C),
@@ -197,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text("Belum punya akun?"),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/register'); // Navigate to Register
+                          context.go('/register');
                         },
                         child: Text(
                           "Daftar",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:citrus_scan/screen/camera_screen.dart'; // Import CameraScreen
-import 'package:citrus_scan/screen/scan_result_screen.dart'; // Import ScanResultScreen
+import 'package:image_picker/image_picker.dart';
+import 'package:citrus_scan/component/scan_option_modal.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   @override
@@ -9,6 +10,30 @@ class CustomNavigationBar extends StatefulWidget {
 
 class _CustomNavigationBarState extends State<CustomNavigationBar> {
   int _currentIndex = 0; // Melacak indeks yang dipilih saat ini
+  final ImagePicker _picker = ImagePicker();
+
+  // Function to handle picking from camera or gallery
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      // Navigasi ke halaman ResultScreen dengan go_router
+      context.go('/result', extra: pickedFile.path); // Mengirim path gambar ke ResultScreen
+    }
+  }
+
+  // Function to show the modal using the separated widget
+  void _showScanOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ScanOptionsModal(
+          onImageSourceSelected: (ImageSource source) {
+            _pickImage(source);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +47,13 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               _currentIndex = index; // Mengubah indeks yang dipilih saat item ditekan
             });
 
-            // Penanganan navigasi untuk Home dan Profile
+            // Penanganan navigasi untuk Home dan Profile menggunakan go_router
             if (index == 0) {
               print('Home ditekan');
-              // Navigasi ke halaman Home (Anda dapat menambahkan logika navigasi jika diperlukan)
+              context.go('/home'); // Navigasi ke HomeScreen
             } else if (index == 1) {
               print('Profile ditekan');
-              // Navigasi ke halaman Scan Result Screen saat profil ditekan
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScanResultScreen()), // Navigasi ke ScanResultScreen
-              );
+              context.go('/profile'); // Navigasi ke ScanResultScreen
             }
           },
           items: [
@@ -55,13 +76,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           top: -30, // Posisi tombol melayang di atas navbar
           left: MediaQuery.of(context).size.width * 0.5 - 28, // Pusatkan tombol di navbar
           child: FloatingActionButton(
-            onPressed: () {
-              // Navigasi ke CameraScreen ketika tombol Scan ditekan
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CameraScreen()),
-              );
-            },
+            onPressed: _showScanOptions,
             backgroundColor: Color(0xFF215C3C),  // Warna tombol (hijau)
             child: Icon(Icons.center_focus_strong, size: 30, color: Colors.white), // Ikon untuk tombol scan
             elevation: 2,  // Memberikan sedikit bayangan untuk tombol

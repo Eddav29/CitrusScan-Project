@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
@@ -45,7 +46,7 @@ class SplashScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 16), // Button height
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
+                      context.go('/login');
                     },
                     child: Text(
                       "Masuk",
@@ -70,7 +71,7 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/register');
+                      context.go('/register');
                     },
                     child: Text(
                       "Buat akun",

@@ -1,9 +1,11 @@
 import 'package:citrus_scan/screen/login_screen.dart';
 import 'package:citrus_scan/screen/splash_screen.dart';
 import 'package:citrus_scan/screen/register_screen.dart';
+import 'package:citrus_scan/screen/result_screen.dart'; 
+import 'package:citrus_scan/screen/scan_result_screen.dart'; // Import ScanResultScreen
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'screen/home_screen.dart';
-
 
 void main() {
   runApp(CitrusScanApp());
@@ -12,20 +14,47 @@ void main() {
 class CitrusScanApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // Definisikan GoRouter
+    final GoRouter _router = GoRouter(
+      initialLocation: '/', // Lokasi awal aplikasi
+      routes: [
+        GoRoute(
+          path: '/', // Route untuk SplashScreen
+          builder: (context, state) => SplashScreen(),
+        ),
+        GoRoute(
+          path: '/login', // Route untuk LoginScreen
+          builder: (context, state) => LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register', // Route untuk RegisterScreen
+          builder: (context, state) => RegisterScreen(),
+        ),
+        GoRoute(
+          path: '/home', // Route untuk HomeScreen
+          builder: (context, state) => HomeScreen(),
+        ),
+        GoRoute(
+          path: '/result', // Route untuk ResultScreen
+          builder: (context, state) => ResultScreen(imagePath: state.extra as String), // Menerima imagePath sebagai argumen
+        ),
+         GoRoute(
+          path: '/resultDetection',
+          builder: (context, state) => ScanResultScreen(imagePath: state.extra as String,), // Tambahkan rute ke layar ScanResultScreen
+        ),
+
+      ],
+    );
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false, // Menghilangkan tulisan "debug"
       title: 'CitrusScan',
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xFF215C3C)), // Warna utama hijau
       ),
-      initialRoute: '/', // Rute awal aplikasi
-      routes: {
-        '/': (context) => SplashScreen(),
-        '/login': (context) => LoginScreen(), 
-        '/register': (context) => RegisterScreen(),
-        '/home': (context) => HomeScreen(),
-        // Tambahkan rute lainnya sesuai dengan fitur yang tersedia
-      },
+      routerDelegate: _router.routerDelegate, // Menggunakan router delegate dari GoRouter
+      routeInformationParser: _router.routeInformationParser, // Parser route dari GoRouter
+      routeInformationProvider: _router.routeInformationProvider, // Provider route dari GoRouter
     );
   }
 

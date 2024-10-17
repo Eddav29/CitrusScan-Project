@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets/navigation_bar.dart';
 import 'tips_widget.dart';
 import 'recent_scan_widget.dart'; // Pastikan sudah mengimpor recent_scan_widget
@@ -41,14 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> buildJerukRows() {
     List<Widget> rows = [];
     for (int i = 0; i < jerukData.length; i += 2) {
-      // Check if the next item exists for pairing
       DataJerukWidget leftCard = DataJerukWidget(
         namaJeruk: jerukData[i]["namaJeruk"]!,
         tanggalScan: jerukData[i]["tanggalScan"]!,
         imagePath: jerukData[i]["imagePath"]!,
       );
 
-      // Check if there is a right card
       DataJerukWidget rightCard = (i + 1 < jerukData.length)
           ? DataJerukWidget(
               namaJeruk: jerukData[i + 1]["namaJeruk"]!,
@@ -149,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontFamily: 'Gilroy', // Menggunakan font Gilroy
                         ),
                       ),
-                      // Ikon untuk melihat selengkapnya
                       Container(
                         decoration: BoxDecoration(
                           color: Color(0xFF215C3C), // Warna hijau
@@ -180,7 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontFamily: 'Gilroy', // Menggunakan font Gilroy
                         ),
                       ),
-                      // Ikon untuk melihat selengkapnya
                       Container(
                         decoration: BoxDecoration(
                           color: Color(0xFF215C3C), // Warna hijau

@@ -1,46 +1,52 @@
+import 'dart:io'; // Untuk menampilkan file gambar
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ScanResultScreen extends StatefulWidget {
+  final String imagePath; // Menerima path gambar yang di-scan
+
+  ScanResultScreen({required this.imagePath});
+
   @override
   _ScanResultScreenState createState() => _ScanResultScreenState();
 }
 
 class _ScanResultScreenState extends State<ScanResultScreen> {
-  bool isBookmarked = false; // Boolean to track whether the bookmark icon is clicked
+  bool isBookmarked = false; // Boolean untuk menandai bookmark
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen height
+    // Mendapatkan tinggi layar
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color of the Scaffold to white
+      backgroundColor: Colors.white, // Warna background putih
       body: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Gambar di bagian atas
-              Image.asset(
-                'assets/images/daunsakit.jpg', // Ganti dengan gambar yang sesuai
-                height: screenHeight * 0.45, // Increased height to 45%
+              // Menampilkan gambar hasil scan dari file
+              Image.file(
+                File(widget.imagePath), // Menggunakan path gambar yang diterima
+                height: screenHeight * 0.45, // Tinggi gambar 45% dari tinggi layar
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 0), // Removed gap for better fit
+              SizedBox(height: 0),
             ],
           ),
           // Membungkus konten dengan SingleChildScrollView
           Positioned(
-            top: screenHeight * 0.4, // Adjust based on the increased image height
+            top: screenHeight * 0.4, // Atur posisi berdasarkan tinggi gambar
             left: 0,
             right: 0,
-            bottom: 0, // Extend to bottom
+            bottom: 0, // Memanjang hingga bawah layar
             child: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white, // Ensure the container has a white background
+                  color: Colors.white, // Pastikan kontainer memiliki background putih
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(40), // Lengkungan besar di atas
                     topRight: Radius.circular(40), // Lengkungan besar di atas
@@ -57,7 +63,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Deskripsi tanaman
+                    // Nama tanaman
                     Text(
                       'Jeruk Manis',
                       style: TextStyle(
@@ -67,6 +73,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       ),
                     ),
                     SizedBox(height: 8),
+                    // Kondisi penyakit
                     Text(
                       'Sakit (Daun Kuning)',
                       style: TextStyle(
@@ -76,6 +83,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    // Deskripsi penyakit
                     Text(
                       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed lacinia justo, ut blandit felis. Sed ac dolor quis justo commodo dignissim id ac justo.',
                       style: TextStyle(
@@ -85,6 +93,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    // Saran perawatan
                     Text(
                       'Saran Perawatan:',
                       style: TextStyle(
@@ -94,6 +103,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                       ),
                     ),
                     SizedBox(height: 8),
+                    // Daftar saran perawatan
                     Text(
                       '1. Periksa kelembaban tanah dan pastikan tidak terlalu kering. \n2. Kurangi penyiraman jika terlalu banyak. \n3. Tempatkan tanaman di tempat yang mendapatkan cahaya cukup, tetapi tidak terkena sinar matahari langsung. \n4. Hapus daun yang menguning untuk mencegah penyebaran penyakit.',
                       style: TextStyle(
@@ -107,15 +117,15 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               ),
             ),
           ),
-          // Ikon kembali di kiri atas dengan latar belakang putih dan ikon hijau
+          // Tombol kembali di kiri atas dengan background putih dan ikon hijau
           Positioned(
             top: 16,
             left: 16,
             child: Container(
-              padding: EdgeInsets.all(8.0), // Padding added to increase background size
+              padding: EdgeInsets.all(8.0), // Padding untuk memperbesar background
               decoration: BoxDecoration(
-                color: Colors.white, // Latar belakang putih
-                shape: BoxShape.circle, // Make background circular
+                color: Colors.white, // Background putih
+                shape: BoxShape.circle, // Membuat background melingkar
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
@@ -127,7 +137,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)), // Ikon hijau
                 onPressed: () {
-                  Navigator.pop(context);
+                  GoRouter.of(context).go('/'); // Kembali ke halaman sebelumnya
                 },
               ),
             ),
@@ -169,7 +179,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    isBookmarked = !isBookmarked; // Toggle the bookmark state
+                    isBookmarked = !isBookmarked; // Toggle bookmark state
                   });
                 },
                 icon: Icon(
