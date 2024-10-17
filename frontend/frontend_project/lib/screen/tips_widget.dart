@@ -36,6 +36,7 @@ class TipsWidget extends StatelessWidget {
                   Text(
                     "Info Penting", // Judul informasi
                     style: TextStyle(
+                      fontFamily: 'Gilroy', // Menggunakan font Gilroy
                       fontSize: 18, // Ukuran font judul
                       fontWeight: FontWeight.bold, // Bold untuk judul
                       color: Colors.white, // Warna teks judul putih
@@ -45,6 +46,7 @@ class TipsWidget extends StatelessWidget {
                   Text(
                     "Jeruk membutuhkan banyak cahaya dan suhu yang stabil untuk berkembang dengan baik.", // Deskripsi info
                     style: TextStyle(
+                      fontFamily: 'Gilroy', // Menggunakan font Gilroy
                       fontSize: 14, // Ukuran font deskripsi
                       color: Colors.white70, // Warna teks deskripsi dengan transparansi
                     ),

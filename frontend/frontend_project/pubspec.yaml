@@ -1,6 +1,6 @@
 name: citrus_scan
 description: "Sebuah Aplikasi yang digunakan untuk mendeteksi penyakit pada daun citrus."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Hapus baris ini jika Anda ingin mempublikasikan ke pub.dev
 version: 1.0.0+1
 
 environment:
@@ -24,3 +24,12 @@ flutter:
 
   assets:
     - assets/images/
+
+  fonts:
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy-Regular.ttf
+        - asset: assets/fonts/Gilroy-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Gilroy-Medium.ttf
+          weight: 500
