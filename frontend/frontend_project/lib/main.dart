@@ -1,5 +1,9 @@
+import 'package:citrus_scan/screen/login_screen.dart';
+import 'package:citrus_scan/screen/splash_screen.dart';
+import 'package:citrus_scan/screen/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'screen/home_screen.dart';
+
 
 void main() {
   runApp(CitrusScanApp());
@@ -16,7 +20,10 @@ class CitrusScanApp extends StatelessWidget {
       ),
       initialRoute: '/', // Rute awal aplikasi
       routes: {
-        '/': (context) => HomeScreen(),
+        '/': (context) => SplashScreen(),
+        '/login': (context) => LoginScreen(), 
+        '/register': (context) => RegisterScreen(),
+        '/home': (context) => HomeScreen(),
         // Tambahkan rute lainnya sesuai dengan fitur yang tersedia
       },
     );

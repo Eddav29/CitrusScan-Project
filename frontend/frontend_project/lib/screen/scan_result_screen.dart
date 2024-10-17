@@ -6,12 +6,15 @@ class ScanResultScreen extends StatefulWidget {
 }
 
 class _ScanResultScreenState extends State<ScanResultScreen> {
-  bool isLoved = false; // Boolean to track whether the love icon is clicked
   bool isBookmarked = false; // Boolean to track whether the bookmark icon is clicked
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen height
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      backgroundColor: Colors.white, // Set the background color of the Scaffold to white
       body: Stack(
         children: [
           Column(
@@ -20,24 +23,24 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               // Gambar di bagian atas
               Image.asset(
                 'assets/images/daunsakit.jpg', // Ganti dengan gambar yang sesuai
-                height: 300,
+                height: screenHeight * 0.45, // Increased height to 45%
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 100), // Memberi jarak untuk naikkan card
+              SizedBox(height: 0), // Removed gap for better fit
             ],
           ),
           // Membungkus konten dengan SingleChildScrollView
           Positioned(
-            top: 230, // Naikkan sedikit menutupi gambar
+            top: screenHeight * 0.4, // Adjust based on the increased image height
             left: 0,
             right: 0,
-            bottom: 0, // Mengisi sampai ke navbar
+            bottom: 0, // Extend to bottom
             child: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white, // Ensure the container has a white background
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(40), // Lengkungan besar di atas
                     topRight: Radius.circular(40), // Lengkungan besar di atas
@@ -112,7 +115,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               padding: EdgeInsets.all(8.0), // Padding added to increase background size
               decoration: BoxDecoration(
                 color: Colors.white, // Latar belakang putih
-                borderRadius: BorderRadius.circular(8), // Mengatur border radius
+                shape: BoxShape.circle, // Make background circular
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
@@ -125,36 +128,6 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)), // Ikon hijau
                 onPressed: () {
                   Navigator.pop(context);
-                },
-              ),
-            ),
-          ),
-          // Ikon love di kanan atas dengan latar belakang putih dan ikon hijau
-          Positioned(
-            top: 16,
-            right: 16,
-            child: Container(
-              padding: EdgeInsets.all(8.0), // Padding added to match the back icon's background size
-              decoration: BoxDecoration(
-                color: Colors.white, // Latar belakang putih
-                borderRadius: BorderRadius.circular(8), // Mengatur border radius
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: Icon(
-                  isLoved ? Icons.favorite : Icons.favorite_border, // Ikon berubah sesuai state
-                  color: isLoved ? Colors.red : Color(0xFF215C3C), // Warna berubah sesuai state
-                ),
-                onPressed: () {
-                  setState(() {
-                    isLoved = !isLoved; // Toggle the state
-                  });
                 },
               ),
             ),
