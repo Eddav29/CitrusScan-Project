@@ -1,6 +1,6 @@
 name: citrus_scan
 description: "Sebuah Aplikasi yang digunakan untuk mendeteksi penyakit pada daun citrus."
-publish_to: 'none' # Hapus baris ini jika Anda ingin mempublikasikan ke pub.dev
+publish_to: "none" # Hapus baris ini jika Anda ingin mempublikasikan ke pub.dev
 version: 1.0.0+1
 
 environment:
@@ -15,6 +15,7 @@ dependencies:
   camera: ^0.11.0+2
   go_router: ^14.3.0
 
+  loading_animation_widget:
 
 dev_dependencies:
   flutter_test:
