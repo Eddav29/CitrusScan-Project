@@ -95,9 +95,9 @@ class JerukRowWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        leftCard,
+        Expanded(child: leftCard),
         SizedBox(width: 10),
-        rightCard,
+        Expanded(child: rightCard),
       ],
     );
   }

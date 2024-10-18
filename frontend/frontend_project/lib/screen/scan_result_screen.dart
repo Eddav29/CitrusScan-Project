@@ -122,7 +122,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             top: 16,
             left: 16,
             child: Container(
-              padding: EdgeInsets.all(8.0), // Padding untuk memperbesar background
+              padding: EdgeInsets.all(2.0), // Padding untuk memperbesar background
               decoration: BoxDecoration(
                 color: Colors.white, // Background putih
                 shape: BoxShape.circle, // Membuat background melingkar
@@ -146,52 +146,68 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
       ),
       // Navbar di bagian bawah
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // Warna navbar menjadi putih
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Mengatur tombol agar memenuhi ruang
-            children: [
-              // Tombol Deteksi Lagi di tengah dan lebih lebar
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Aksi untuk tombol Deteksi Lagi
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF215C3C), // Warna hijau yang baru
-                    padding: EdgeInsets.symmetric(vertical: 16), // Lebar tombol
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // Border radius sedikit lebih kotak
-                    ),
-                  ),
-                  icon: Icon(Icons.center_focus_strong, color: Colors.white), // Ikon scan
-                  label: Text(
-                    'Deteksi Lagi',
-                    style: TextStyle(fontFamily: 'Gilroy', fontSize: 16, color: Colors.white),
+  color: Colors.white, // Warna navbar menjadi putih
+  shape: const CircularNotchedRectangle(),
+  notchMargin: 6.0,
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Mengatur tombol agar memenuhi ruang
+      children: [
+        // Tombol Deteksi Lagi di tengah dan lebih lebar
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              // Aksi untuk tombol Deteksi Lagi
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF215C3C), // Warna hijau yang baru
+              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20), // Lebar tombol
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // Border radius sedikit lebih kotak
+              ),
+              minimumSize: Size(0, 56), // Menentukan ukuran minimum
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center, // Pusatkan ikon dan teks
+              children: [
+                Icon(
+                  Icons.center_focus_strong,
+                  color: Colors.white,
+                  size: 24, // Ukuran ikon
+                ), 
+                SizedBox(width: 8), // Spasi antara ikon dan teks
+                Text(
+                  'Deteksi Lagi',
+                  style: TextStyle(
+                    fontFamily: 'Gilroy',
+                    fontSize: 18, // Ukuran font lebih besar
+                    color: Colors.white,
                   ),
                 ),
-              ),
-              SizedBox(width: 20), // Jarak antara tombol dan bookmark
-              // Ikon Bookmark
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    isBookmarked = !isBookmarked; // Toggle bookmark state
-                  });
-                },
-                icon: Icon(
-                  isBookmarked ? Icons.bookmark : Icons.bookmark_border, // Ikon berubah sesuai state
-                  color: isBookmarked ? Color(0xFF215C3C) : Colors.grey, // Warna berubah sesuai state
-                  size: 30,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+        SizedBox(width: 20), // Jarak antara tombol dan bookmark
+        // Ikon Bookmark
+        IconButton(
+          onPressed: () {
+            setState(() {
+              isBookmarked = !isBookmarked; // Toggle bookmark state
+            });
+          },
+          icon: Icon(
+            isBookmarked ? Icons.bookmark : Icons.bookmark_border, // Ikon berubah sesuai state
+            color: isBookmarked ? Color(0xFF215C3C) : Colors.grey, // Warna berubah sesuai state
+            size: 30,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
     );
   }
 }
