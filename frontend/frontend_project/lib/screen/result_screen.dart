@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // Pastikan Anda mengimpor go_router
+import 'loading_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final String imagePath;
@@ -45,7 +46,15 @@ class ResultScreen extends StatelessWidget {
                     textStyle: TextStyle(fontSize: 18),
                   ),
                   onPressed: () {
-                    context.go('/resultDetection', extra: imagePath);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoadingScreen()),
+                    );
+
+                    Future.delayed(Duration(seconds: 3), () {
+                      context.go('/resultDetection', extra: imagePath);
+                    });
+
                     // Tambahkan logika deteksi penyakit di sini
                     print('Deteksi Penyakit');
                   },

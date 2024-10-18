@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -183,7 +184,37 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
-                          
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Login with Google Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Add your Google login logic here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Set background to white for Google style
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: Color(0xFF215C3C)), // Border color
+                        ),
+                      ),
+                      icon: Image.asset(
+                        'assets/images/google.png', // Add the path to your Google icon
+                        height: 24,
+                        width: 24,
+                      ),
+                      label: Text(
+                        "Login with Google",
+                        style: TextStyle(
+                          color: Color(0xFF215C3C), // Set text color to match theme
+                          fontSize: 16,
                         ),
                       ),
                     ),

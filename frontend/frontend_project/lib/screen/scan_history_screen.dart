@@ -62,7 +62,7 @@ class ScanHistoryScreen extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ScanResultScreen()), // Ganti dengan halaman hasil scan yang sesuai
+                  ScanResultScreen(imagePath: '',)), // Ganti dengan halaman hasil scan yang sesuai
         );
       },
       child: Container(

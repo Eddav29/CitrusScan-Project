@@ -16,7 +16,7 @@ class RecentScanWidget extends StatelessWidget {
               // Arahkan ke halaman ScanResultScreen saat kartu diklik
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ScanResultScreen()),
+                MaterialPageRoute(builder: (context) => ScanResultScreen(imagePath: '',)),
               );
             },
             child: Container(
