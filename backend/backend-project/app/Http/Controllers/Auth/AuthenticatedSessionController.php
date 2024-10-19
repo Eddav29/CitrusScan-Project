@@ -5,34 +5,47 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
+        
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $request->session()->regenerate();
-
-        return response()->noContent();
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+            'status' => 'Login successful',
+        ], 200); // HTTP 200 OK
     }
+
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        $user = Auth::guard('sanctum')->user(); // Manually check if user is authenticated
 
-        $request->session()->invalidate();
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated or token is invalid'], 401);
+        }
 
-        $request->session()->regenerateToken();
+        // Delete the user's current access token
+        $user->currentAccessToken()->delete();
 
-        return response()->noContent();
+        // Invalidate the session and regenerate CSRF token
+        // $request->session()->invalidate();
+        // $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logout successful']);
     }
 }
