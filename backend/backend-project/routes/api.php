@@ -14,3 +14,11 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 //      ->middleware('auth:sanctum'); // Jika menggunakan Sanctum
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+// routes/api.php
+Route::get('/test-connection', function () {
+    return response()->json([
+        'message' => 'API Connection successful!',
+        'status' => 200,
+        'timestamp' => now()
+    ]);
+});
