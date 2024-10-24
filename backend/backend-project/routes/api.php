@@ -2,6 +2,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 // Route untuk registrasi
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -22,3 +23,14 @@ Route::get('/test-connection', function () {
         'timestamp' => now()
     ]);
 });
+
+
+// routes User
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::post('/users', [UserController::class, 'store']);
+Route::put('/users/{id}', [UserController::class, 'update']);
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+
+// routes DiseaseData
