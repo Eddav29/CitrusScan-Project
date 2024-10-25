@@ -13,14 +13,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         $users = User::all();
 
+
         return response()->json([
             'success' => true,
             'message' => 'Users fetched successfully',
-            'data'    => UserResource::collection($users),
+            'data'    => $users,
         ], 200); // Status 200 OK
     }
 
@@ -38,7 +40,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User found successfully',
-                'data'    => new UserResource($user),
+                'data'    => $user,
             ], 200); // Status 200 OK
         }
 
@@ -71,7 +73,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
-            'data'    => new UserResource($user),
+            'data'    => $user,
         ], 201); // Status 201 Created
     }
 
@@ -108,7 +110,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User updated successfully',
-            'data'    => new UserResource($user),
+            'data'    => $user,
         ], 200); // Status 200 OK
     }
 

@@ -16,7 +16,7 @@ class DetectionsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detections fetched successfully',
-            'data'    => DetectionResource::collection($detections),
+            'data'    => $detections,
         ], 200);
     }
 
@@ -28,7 +28,7 @@ class DetectionsController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Detection found successfully',
-                'data'    => new DetectionResource($detection),
+                'data'    => $detection,
             ], 200);
         }
 
@@ -69,7 +69,7 @@ class DetectionsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detection created successfully',
-            'data'    => new DetectionResource($detection),
+            'data'    => $detection,
         ], 201);
     }
 
@@ -119,7 +119,7 @@ class DetectionsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detection updated successfully',
-            'data'    => new DetectionResource($detection),
+            'data'    => $detection,
         ], 200);
     }
 

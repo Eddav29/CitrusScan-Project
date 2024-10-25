@@ -15,7 +15,7 @@ class HistoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Histories fetched successfully',
-            'data'    => HistoryResource::collection($histories),
+            'data'    => $histories,
         ], 200); // Status 200 OK
     }
 
@@ -27,7 +27,7 @@ class HistoryController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'History found successfully',
-                'data'    => new HistoryResource($history),
+                'data'    => $history,
             ], 200); // Status 200 OK
         }
 
@@ -50,7 +50,7 @@ class HistoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'History created successfully',
-            'data'    => new HistoryResource($history),
+            'data'    => $history,
         ], 201); // Status 201 Created
     }
 
@@ -76,7 +76,7 @@ class HistoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'History updated successfully',
-            'data'    => new HistoryResource($history),
+            'data'    => $history,
         ], 200); // Status 200 OK
     }
 
