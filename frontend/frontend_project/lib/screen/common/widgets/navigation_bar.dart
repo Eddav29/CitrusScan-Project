@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:citrus_scan/component/scan_option_modal.dart';
+import 'package:citrus_scan/screen/pages/scan/widgets/scan_option_modal.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomNavigationBar extends StatefulWidget {

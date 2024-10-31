@@ -1,20 +1,16 @@
-import 'package:citrus_scan/screen/login_screen.dart';
+import 'package:citrus_scan/screen/pages/auth/login_screen.dart';
 import 'package:citrus_scan/screen/splash_screen.dart';
-import 'package:citrus_scan/screen/register_screen.dart';
-import 'package:citrus_scan/screen/result_screen.dart'; 
-import 'package:citrus_scan/screen/scan_result_screen.dart'; // Import ScanResultScreen
+import 'package:citrus_scan/screen/pages/auth/register_screen.dart';
+import 'package:citrus_scan/screen/pages/scan/result_screen.dart'; 
+import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart'; // Import ScanResultScreen
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:citrus_scan/screen/home_screen.dart';
-import 'package:citrus_scan/api/api.dart'; // Import ApiService
+import 'package:citrus_scan/screen/pages/home/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Test koneksi API
-  final apiService = ApiService();
-  bool isConnected = await apiService.testConnection();
-  print('API Connection status: ${isConnected ? 'Connected' : 'Failed to connect'}');
   runApp(CitrusScanApp());
 }
 class CitrusScanApp extends StatelessWidget {

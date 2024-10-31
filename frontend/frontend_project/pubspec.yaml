@@ -17,6 +17,8 @@ dependencies:
 
   loading_animation_widget:
   dio: ^5.7.0
+  flutter_bloc: ^8.1.6
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:

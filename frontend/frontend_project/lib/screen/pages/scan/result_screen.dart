@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // Pastikan Anda mengimpor go_router
-import 'loading_screen.dart';
+import '../../common/widgets/loading_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final String imagePath;

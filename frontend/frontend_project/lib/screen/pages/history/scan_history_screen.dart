@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'scan_result_screen.dart';
+import '../scan/scan_result_screen.dart';
 
 class ScanHistoryScreen extends StatelessWidget {
   @override
