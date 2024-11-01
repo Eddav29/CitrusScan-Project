@@ -1,3 +1,4 @@
+import 'package:citrus_scan/provider/provider.dart';
 import 'package:citrus_scan/screen/pages/auth/login_screen.dart';
 import 'package:citrus_scan/screen/splash_screen.dart';
 import 'package:citrus_scan/screen/pages/auth/register_screen.dart';
@@ -6,12 +7,24 @@ import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart'; // Impor
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:citrus_scan/screen/pages/home/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Test koneksi API
-  runApp(CitrusScanApp());
+  final sharedPreferences = await SharedPreferences.getInstance();
+  
+  runApp(
+    ProviderScope(
+      overrides: [
+        // Override the sharedPreferencesProvider with the instance
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: CitrusScanApp(),
+    ),
+  );
 }
 class CitrusScanApp extends StatelessWidget {
   @override
