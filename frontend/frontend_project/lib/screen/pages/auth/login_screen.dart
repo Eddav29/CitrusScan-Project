@@ -273,14 +273,14 @@ class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
-    path.lineTo(0, size.height);
+    path.lineTo(0, size.height - 120); // Memulai sedikit lebih tinggi
     path.quadraticBezierTo(
-      size.width / 4, size.height - 30,
-      size.width / 2, size.height - 10,
+      size.width / 4, size.height - 100, // Menambahkan titik cembung di tengah
+      size.width / 2, size.height - 110,
     );
     path.quadraticBezierTo(
-      3 / 4 * size.width, size.height + 20,
-      size.width, size.height - 10,
+      3 * size.width / 4, size.height, // Titik akhir cembung
+      size.width, size.height - 90,
     );
     path.lineTo(size.width, 0);
     path.close();

@@ -63,20 +63,29 @@ class UserController extends Controller
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
-
+    
+        // Generate a random token for remember_token
+        $rememberToken = \Str::random(60);  // Generates a random token
+    
+        // Set email_verified_at to the current timestamp
+        $emailVerifiedAt = now();  // This will set the timestamp to now()
+    
+        // Create the user
         $user = User::create([
-            'name'     => $validatedData['name'],
-            'email'    => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
+            'name'             => $validatedData['name'],
+            'email'            => $validatedData['email'],
+            'password'         => bcrypt($validatedData['password']),
+            'remember_token'   => $rememberToken,       // Explicitly setting remember_token
+            'email_verified_at'=> $emailVerifiedAt,     // Explicitly setting email_verified_at
         ]);
-
+    
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
             'data'    => $user,
         ], 201); // Status 201 Created
-    }
-
+    }    
+    
     /**
      * Update the specified user in storage.
      *
