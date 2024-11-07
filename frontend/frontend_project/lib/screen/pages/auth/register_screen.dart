@@ -41,7 +41,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     try {
       await ref.read(authControllerProvider.notifier).register(
-        email: _emailController.text.trim(),
+        email: _emailController.text.trim() ,
         password: _passwordController.text,
         name: _nameController.text.trim(),
         passwordConfirmation: _confirmPasswordController.text,
