@@ -11,7 +11,7 @@ import 'package:citrus_scan/data/datasource/auth_api.dart';
 class AuthController extends StateNotifier<AuthState> {
   final AuthApi _authApi;
   final SharedPreferences _prefs;
-  
+
   AuthController(this._authApi, this._prefs) : super(AuthState()) {
     _initializeAuth();
   }
@@ -19,7 +19,7 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> _initializeAuth() async {
     final token = _prefs.getString('token');
     final userData = _prefs.getString('user');
-    
+
     if (token != null && userData != null) {
       try {
         final user = User.fromJson(jsonDecode(userData));
@@ -42,32 +42,51 @@ class AuthController extends StateNotifier<AuthState> {
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
+      // Generate a remember_token (could be any unique string or random token generator)
+      final rememberToken = _generateRememberToken();
+
+      // Ensure the email_verified_at is set to the current date if null
+      final emailVerifiedAt = DateTime.now().toIso8601String();
+
+      // API registration call
       final response = await _authApi.register(
         email: email,
         password: password,
         name: name,
         passwordConfirmation: passwordConfirmation,
+        emailVerifiedAt: emailVerifiedAt,
+        rememberToken: rememberToken,
       );
-      
-      final user = User.fromJson(response);
-      final token = response['token'] as String;
 
+      final user = User.fromJson(response);
+      final token = response['token'];
+
+      // Save token and user data to SharedPreferences
       await _prefs.setString('token', token);
       await _prefs.setString('user', jsonEncode(user.toJson()));
-      
+
+      // Update state with the newly registered user and token
       state = state.copyWith(
-        isLoading: false,
-        user: user,
         token: token,
+        user: user,
+        isLoading: false,
+        error: null,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-      rethrow;
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  String _generateRememberToken() {
+    // Here you can use any method to generate a unique token,
+    // for example, generating a random string.
+    return DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
+// Example token generation (you can replace this with your actual implementation)
+  String generateToken() {
+    return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   Future<void> login({
@@ -76,18 +95,18 @@ class AuthController extends StateNotifier<AuthState> {
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
       final response = await _authApi.login(
         email: email,
         password: password,
       );
-      
+
       final user = User.fromJson(response);
       final token = response['token'] as String;
 
       await _prefs.setString('token', token);
       await _prefs.setString('user', jsonEncode(user.toJson()));
-      
+
       state = state.copyWith(
         isLoading: false,
         user: user,
@@ -105,14 +124,14 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> logout() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
       if (state.token != null) {
         await _authApi.logout(token: state.token!);
       }
 
       await _prefs.remove('token');
       await _prefs.remove('user');
-      
+
       state = AuthState();
     } catch (e) {
       state = state.copyWith(

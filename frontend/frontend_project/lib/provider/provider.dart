@@ -9,7 +9,9 @@ import 'package:citrus_scan/controller/auth_controller.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: Platform.isAndroid ? 'http://10.0.2.2:8000/api' : 'http://127.0.0.1:8000/api',
+    baseUrl: Platform.isAndroid
+        ? 'http://10.0.2.2:8000/api'
+        : 'http://127.0.0.1:8000/api',
     contentType: 'application/json',
     headers: {
       'Accept': 'application/json',
@@ -36,7 +38,8 @@ final authApiProvider = Provider<AuthApi>((ref) {
   return AuthApi(dio);
 });
 
-final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AuthState>((ref) {
   final authApi = ref.watch(authApiProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
   return AuthController(authApi, prefs);
