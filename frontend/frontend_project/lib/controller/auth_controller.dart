@@ -101,7 +101,7 @@ class AuthController extends StateNotifier<AuthState> {
         password: password,
       );
 
-      final user = User.fromJson(response);
+      final user = User.fromJson(response['user'] as Map<String, dynamic>);
       final token = response['token'] as String;
 
       await _prefs.setString('token', token);

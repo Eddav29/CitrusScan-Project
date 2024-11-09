@@ -29,7 +29,7 @@ class AuthApi {
     return response.data;
   }
 
-  Future<Map<String, dynamic>> login({
+    Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
@@ -42,7 +42,11 @@ class AuthApi {
         },
       );
 
-      return response.data as Map<String, dynamic>;
+      final responseData = response.data as Map<String, dynamic>;
+      return {
+        'token': responseData['access_token'],
+        'user': responseData['user'],
+      };
     } on DioException catch (e) {
       throw _handleError(e);
     }
