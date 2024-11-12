@@ -1,5 +1,6 @@
 import 'package:citrus_scan/provider/provider.dart';
 import 'package:citrus_scan/screen/pages/auth/login_screen.dart';
+import 'package:citrus_scan/screen/pages/profile/edit_profile.dart';
 import 'package:citrus_scan/screen/splash_screen.dart';
 import 'package:citrus_scan/screen/pages/auth/register_screen.dart';
 import 'package:citrus_scan/screen/pages/scan/result_screen.dart'; 
@@ -9,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:citrus_scan/screen/pages/home/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/screen/pages/profile/profile_screen.dart';
+import 'package:citrus_scan/screen/pages/profile/change_password.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +60,19 @@ class CitrusScanApp extends StatelessWidget {
           path: '/resultDetection',
           builder: (context, state) => ScanResultScreen(imagePath: state.extra as String,), // Tambahkan rute ke layar ScanResultScreen
         ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => ProfileScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+        GoRoute(
+          path: '/profileEdit',
+          builder: (context, state) => EditProfileScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+        GoRoute(
+          path: '/changePassword',
+          builder: (context, state) => ChangePasswordScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+
 
       ],
     );

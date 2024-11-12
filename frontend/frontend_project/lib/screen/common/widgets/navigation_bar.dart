@@ -37,6 +37,23 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    // Check the current route path using GoRouter's currentConfiguration.fullPath
+    final currentPath = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+    if (currentPath == '/home') {
+      _currentIndex = 0;
+    } else if (currentPath == '/profile') {
+      _currentIndex = 1;
+    }  else if (currentPath == '/profileEdit') {
+      _currentIndex = 1;
+    }
+    else if (currentPath == '/changePassword') {
+      _currentIndex = 1;
+    }
+     else {
+      _currentIndex = -1; // Nonaktifkan link navigasi jika bukan di halaman Home atau Profile
+    }
+
+
     return Stack(
       clipBehavior: Clip.none, // Mencegah elemen terpotong di luar batas
       children: [
@@ -49,20 +66,24 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
 
             // Penanganan navigasi untuk Home dan Profile menggunakan go_router
             if (index == 0) {
-              print('Home ditekan');
               context.go('/home'); // Navigasi ke HomeScreen
             } else if (index == 1) {
-              print('Profile ditekan');
-              context.go('/profile'); // Navigasi ke ScanResultScreen
+              context.go('/profile'); // Navigasi ke ProfileScreen
             }
           },
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(
+                Icons.home,
+                color: _currentIndex == 0 ? Color(0xFF215C3C) : Colors.grey, // Warna hijau jika aktif
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(
+                Icons.person,
+                color: _currentIndex == 1 ? Color(0xFF215C3C) : Colors.grey, // Warna hijau jika aktif
+              ),
               label: 'Profile',
             ),
           ],
