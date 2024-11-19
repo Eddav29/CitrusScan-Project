@@ -29,7 +29,8 @@ class User extends Authenticatable
         'email',
         'password',
         'remember_token',   // Add remember_token to fillable
-        'email_verified_at' // Add email_verified_at to fillable
+        'email_verified_at',
+        'profile_picture',
     ];
     
 

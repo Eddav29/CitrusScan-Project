@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\DetectionsController;
 use App\Http\Controllers\HistoryController;
-
+use App\Http\Controllers\Auth\GoogleController;
 Route::get('/test-connection', function () {
     return response()->json([
         'message' => 'API Connection successful!',
@@ -22,7 +22,12 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 // Route untuk logout
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
-// Grouping routes with prefix and middleware
+// Route untuk mengambil profil pengguna yang sedang login
+Route::get('/profile', [AuthenticatedSessionController::class, 'profile']);
+
+
+Route::get('google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::apiResource('users', UserController::class);
 Route::apiResource('disease', DiseaseController::class);

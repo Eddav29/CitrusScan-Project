@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('prevention');
             $table->timestamps();
         });
-    }
 
+    }
     /**
      * Reverse the migrations.
      */
