@@ -1,16 +1,34 @@
-import 'package:citrus_scan/screen/login_screen.dart';
+import 'package:citrus_scan/provider/provider.dart';
+import 'package:citrus_scan/screen/pages/auth/login_screen.dart';
+import 'package:citrus_scan/screen/pages/profile/edit_profile.dart';
 import 'package:citrus_scan/screen/splash_screen.dart';
-import 'package:citrus_scan/screen/register_screen.dart';
-import 'package:citrus_scan/screen/result_screen.dart'; 
-import 'package:citrus_scan/screen/scan_result_screen.dart'; // Import ScanResultScreen
+import 'package:citrus_scan/screen/pages/auth/register_screen.dart';
+import 'package:citrus_scan/screen/pages/scan/result_screen.dart'; 
+import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart'; // Import ScanResultScreen
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'screen/home_screen.dart';
+import 'package:citrus_scan/screen/pages/home/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/screen/pages/profile/profile_screen.dart';
+import 'package:citrus_scan/screen/pages/profile/change_password.dart';
 
-void main() {
-  runApp(CitrusScanApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Test koneksi API
+  final sharedPreferences = await SharedPreferences.getInstance();
+  
+  runApp(
+    ProviderScope(
+      overrides: [
+        // Override the sharedPreferencesProvider with the instance
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: CitrusScanApp(),
+    ),
+  );
 }
-
 class CitrusScanApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -42,6 +60,19 @@ class CitrusScanApp extends StatelessWidget {
           path: '/resultDetection',
           builder: (context, state) => ScanResultScreen(imagePath: state.extra as String,), // Tambahkan rute ke layar ScanResultScreen
         ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => ProfileScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+        GoRoute(
+          path: '/profileEdit',
+          builder: (context, state) => EditProfileScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+        GoRoute(
+          path: '/changePassword',
+          builder: (context, state) => ChangePasswordScreen(), // Tambahkan rute ke layar ScanResultScreen
+        ),
+
 
       ],
     );

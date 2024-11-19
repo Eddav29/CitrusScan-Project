@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Container(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.5),
           ),
           // Wrap Column with SingleChildScrollView for scrolling capability
           SingleChildScrollView(
@@ -28,9 +28,16 @@ class SplashScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 36,
-                    fontFamily: 'Gilroy', // Using Gilroy font
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Gilroy', // Menggunakan font Gilroy
+                    color: Colors.white.withOpacity(0.9), // Warna teks lebih terang
+                    fontWeight: FontWeight.w900,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(2, 2),
+                        blurRadius: 4,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 40),

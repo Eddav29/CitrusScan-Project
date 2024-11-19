@@ -1,9 +1,9 @@
-import 'package:citrus_scan/screen/result_screen.dart'; // Import result screen
+import 'package:citrus_scan/screen/pages/scan/result_screen.dart'; // Import result screen
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'loading_screen.dart'; // Import loading screen
+import '../../common/widgets/loading_screen.dart'; // Import loading screen
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);

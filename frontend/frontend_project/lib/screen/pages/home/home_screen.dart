@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../widgets/navigation_bar.dart';
+import '../../common/widgets/navigation_bar.dart';
 import 'tips_widget.dart';
-import 'recent_scan_widget.dart';
+import '../scan/recent_scan_widget.dart';
 import 'data_jeruk_widget.dart';
-import '../widgets/app_bar.dart';
-import 'scan_history_screen.dart';
+import '../../common/widgets/app_bar.dart';
+import '../history/scan_history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
