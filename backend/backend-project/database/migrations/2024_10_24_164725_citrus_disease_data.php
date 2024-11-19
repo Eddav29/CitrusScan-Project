@@ -11,23 +11,57 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('citrus_disease_data', function (Blueprint $table) {
-            $table->uuid('disease_id')->primary();
-            $table->string('disease_name');
-            $table->text('description');
-            $table->string('symptoms');
-            $table->string('prevention');
+        // Tabel untuk data penyakit
+        Schema::create('diseases', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('treatment')->nullable();
             $table->timestamps();
         });
 
+        // Tabel untuk langkah perawatan penyakit
+        Schema::create('disease_treatments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('disease_id');
+            $table->integer('step'); // Urutan langkah
+            $table->text('action'); // Deskripsi langkah
+            $table->timestamps();
+
+            // Relasi ke tabel diseases
+            $table->foreign('disease_id')->references('id')->on('diseases')->onDelete('cascade');
+        });
+
+        // Tabel untuk prediksi penyakit
+        Schema::create('predictions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('predicted_class'); // Nama penyakit hasil prediksi
+            $table->float('confidence'); // Confidence level
+            $table->timestamps();
+        });
+
+        // Tabel untuk probabilitas prediksi penyakit
+        Schema::create('all_probabilities', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('prediction_id'); // Relasi ke prediksi
+            $table->string('disease_name'); // Nama penyakit
+            $table->float('probability'); // Probabilitas
+            $table->timestamps();
+
+            // Relasi ke tabel predictions
+            $table->foreign('prediction_id')->references('id')->on('predictions')->onDelete('cascade');
+        });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('citrus_disease_data');
+        // Drop tables in reverse order to avoid foreign key constraint issues
+        Schema::dropIfExists('all_probabilities');
+        Schema::dropIfExists('predictions');
+        Schema::dropIfExists('disease_treatments');
+        Schema::dropIfExists('diseases');
     }
 };

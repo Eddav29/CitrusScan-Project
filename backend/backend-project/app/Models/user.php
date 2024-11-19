@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, HasUuids;
@@ -55,5 +56,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(UserHistory::class, 'user_id');
     }
 }

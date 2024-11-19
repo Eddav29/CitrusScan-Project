@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(DetectionsSeeder::class);
         $this->call(HistorySeeder::class);
-        $this->call(DiseaseDataSeeder::class);
+        $this->call([
+            DiseaseSeeder::class,
+            DiseaseTreatmentSeeder::class,
+            PredictionSeeder::class,
+            AllProbabilitiesSeeder::class,
+        ]);
     }
 }
