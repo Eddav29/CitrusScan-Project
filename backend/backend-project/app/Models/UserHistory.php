@@ -20,6 +20,7 @@ class UserHistory extends Model
         'user_id',
         'prediction_id',
         'image_path',
+        'created_at', 
     ];
 
     public function user()

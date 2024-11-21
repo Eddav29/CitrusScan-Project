@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             DiseaseSeeder::class,
             DiseaseTreatmentSeeder::class,
             PredictionSeeder::class,
-            AllProbabilitiesSeeder::class,
+            UserHistorySeeder::class,
         ]);
     }
 }

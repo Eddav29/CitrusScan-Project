@@ -18,12 +18,19 @@ class Prediction extends Model
     protected $fillable = [
         'prediction_id',
         'disease_id',
+        'second_best_disease',
         'confidence',
+        'second_best_disease_confidence',
     ];
 
     public function disease()
     {
         return $this->belongsTo(Disease::class, 'disease_id', 'disease_id');
+    }
+
+    public function secondBestDisease()
+    {
+        return $this->belongsTo(Disease::class, 'second_best_disease', 'disease_id');
     }
 
     public function probabilities()
