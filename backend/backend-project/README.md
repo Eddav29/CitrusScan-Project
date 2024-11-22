@@ -1,66 +1,239 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Eddav29: @workspace buatkan Readme nya sekalian tambahkan dokumentasi api di dalamnya
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Workspace: I'll help you create a comprehensive 
 
-## About Laravel
+README.md
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+ file with API documentation. Here's a suggested structure:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```markdown
+# Citrus Disease Detection API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+A Laravel-based REST API for citrus disease detection and management.
 
-## Learning Laravel
+## Table of Contents
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+  - [Authentication](#authentication)
+  - [User Management](#user-management)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP >= 8.2
+- Composer
+- Laravel 11.x
+- MySQL/SQLite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+1. Clone the repository:
+```sh
+git clone <repository-url>
+cd <project-directory>
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. Install dependencies:
+```sh
+composer install
+```
 
-### Premium Partners
+3. Set up environment:
+```sh
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+4. Run migrations:
+```sh
+php artisan migrate
+```
 
-## Contributing
+5. Seed database:
+```sh
+php artisan db:seed
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Configuration
 
-## Code of Conduct
+1. Configure your database in 
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+.env
 
-## Security Vulnerabilities
+:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Configure Google OAuth (if using social login):
+```env
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_REDIRECT_URL=your_redirect_url
+```
 
-## License
+## API Documentation
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Authentication
+
+#### Register User
+```
+POST /api/register
+
+Request:
+{
+    "name": "string",
+    "email": "string",
+    "password": "string",
+    "password_confirmation": "string"
+}
+
+Response:
+{
+    "access_token": "string",
+    "token_type": "Bearer",
+    "user": {
+        "user_id": "uuid",
+        "name": "string",
+        "email": "string"
+    }
+}
+```
+
+#### Login
+```
+POST /api/login
+
+Request:
+{
+    "email": "string",
+    "password": "string"
+}
+
+Response:
+{
+    "access_token": "string",
+    "token_type": "Bearer",
+    "user": {
+        "user_id": "uuid",
+        "name": "string",
+        "email": "string"
+    }
+}
+```
+
+#### Logout
+```
+POST /api/logout
+
+Headers:
+Authorization: Bearer <token>
+
+Response:
+{
+    "message": "Logout successful"
+}
+```
+
+### User Management
+
+#### Get Profile
+```
+GET /api/profile
+
+Headers:
+Authorization: Bearer <token>
+
+Response:
+{
+    "user": {
+        "user_id": "uuid",
+        "name": "string",
+        "email": "string"
+    }
+}
+```
+
+#### Update Profile
+```
+PUT /api/profile
+
+Headers:
+Authorization: Bearer <token>
+
+Request:
+{
+    "name": "string", // optional
+    "email": "string" // optional
+}
+
+Response:
+{
+    "user": {
+        "user_id": "uuid",
+        "name": "string",
+        "email": "string"
+    }
+}
+```
+
+#### Update Password
+```
+PUT /api/update-password
+
+Headers:
+Authorization: Bearer <token>
+
+Request:
+{
+    "old_password": "string",
+    "new_password": "string",
+    "new_password_confirmation": "string"
+}
+
+Response:
+{
+    "message": "Password updated successfully"
+}
+```
+
+## Error Responses
+
+The API returns standard HTTP status codes:
+
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 422: Validation Error
+- 500: Server Error
+
+Error response format:
+```json
+{
+    "error": "Error message"
+}
+```
+
+For validation errors:
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "field": [
+            "Error message"
+        ]
+    }
+}
+```
+```
+
+This README provides comprehensive documentation for your API, including installation instructions, configuration details, and API endpoints. Feel free to modify it according to your specific needs.This README provides comprehensive documentation for your API, including installation instructions, configuration details, and API endpoints. Feel free to modify it according to your specific needs.

@@ -1,12 +1,9 @@
 <?php
+
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\DiseaseController;
-use App\Http\Controllers\DetectionsController;
-use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\Auth\GoogleController;
+
 Route::get('/test-connection', function () {
     return response()->json([
         'message' => 'API Connection successful!',
@@ -25,11 +22,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 // Route untuk mengambil profil pengguna yang sedang login
 Route::get('/profile', [AuthenticatedSessionController::class, 'profile']);
 
+// Route untuk mengupdate profil pengguna yang sedang login
+Route::put('/profile', [AuthenticatedSessionController::class, 'updateProfile']);
 
-Route::get('google', [GoogleController::class, 'redirectToGoogle']);
-Route::get('google/callback', [GoogleController::class, 'handleGoogleCallback']);
-
-Route::apiResource('users', UserController::class);
-Route::apiResource('disease', DiseaseController::class);
-Route::apiResource('detection', DetectionsController::class);
-Route::apiResource('history', HistoryController::class);
+// Route untuk mengupdate password pengguna yang sedang login
+Route::put('/update-password', [AuthenticatedSessionController::class, 'updatePassword']);
