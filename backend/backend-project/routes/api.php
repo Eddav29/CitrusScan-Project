@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\PredictionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserHistoryController;
 
 Route::get('/test-connection', function () {
     return response()->json([
@@ -34,4 +35,11 @@ Route::put('/update-password', [AuthenticatedSessionController::class, 'updatePa
 Route::get('/diseases', [DiseaseController::class, 'index']);
 Route::get('/diseases/{id}', [DiseaseController::class, 'show']);
 
+// Route untuk prediksi penyakit
 Route::post('/predict', [PredictionController::class, 'predict']);
+
+// Route untuk riwayat prediksi pengguna
+Route::get('/user-history/{user_id}', [UserHistoryController::class, 'showHistory']);
+
+//Route untuk melihat detail riwayat
+Route::get('/user-history/{user_id}/history/{user_history_id}', [UserHistoryController::class, 'showHistoryDetail']);

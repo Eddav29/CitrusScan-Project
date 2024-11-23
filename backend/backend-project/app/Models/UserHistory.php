@@ -19,4 +19,14 @@ class UserHistory extends Model
         'prediction_id',
         'image_path',
     ];
+
+    public function prediction()
+    {
+        return $this->belongsTo(Prediction::class, 'prediction_id', 'prediction_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
 }

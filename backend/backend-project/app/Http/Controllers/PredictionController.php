@@ -80,6 +80,8 @@ class PredictionController extends Controller
         return response()->json([
             'message' => 'Prediction successful',
             'data' => [
+                'prediction_id' => $predictionRecord->prediction_id,
+                'disease_id' => $predictionRecord->disease_id,
                 'disease' => $prediction,
                 'confidence' => $confidence,
                 'second_best' => $secondBest,
@@ -91,6 +93,21 @@ class PredictionController extends Controller
     // Helper function untuk mendapatkan disease_id dari nama penyakit
     private function getDiseaseIdByName($diseaseName)
     {
-        return \DB::table('diseases')->where('name', $diseaseName)->value('disease_id');
+        // Pemetaan nama penyakit dari API ke tabel diseases
+        $diseaseMapping = [
+            'Canker' => 'Citrus Canker',
+            'Greening' => 'Citrus Greening (HLB)',
+            'Black spot' => 'Citrus Black Spot',
+            'Melanose' => 'Citrus Melanose',
+            'Healthy' => "Healthy Citrus",
+
+        ];
+
+        // Ganti nama penyakit sesuai dengan tabel, jika ada
+        $normalizedDiseaseName = $diseaseMapping[$diseaseName] ?? $diseaseName;
+
+        $diseaseId = \DB::table('diseases')->where('name', $normalizedDiseaseName)->value('disease_id');
+
+        return $diseaseId;
     }
 }
