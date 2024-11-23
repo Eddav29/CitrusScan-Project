@@ -52,8 +52,8 @@ return new class extends Migration
             $table->uuid('user_id'); // Referensi ke tabel users
             $table->uuid('prediction_id'); // Referensi ke tabel predictions
             $table->text('image_path'); // Lokasi gambar yang diunggah pengguna
-            $table->timestamp('created_at')->useCurrent(); // Waktu riwayat dibuat
-
+            $table->timestamp('created_at');// Waktu unggah gambar
+            $table->timestamp('updated_at')->nullable();
             // Foreign keys
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('prediction_id')->references('prediction_id')->on('predictions')->onDelete('cascade');

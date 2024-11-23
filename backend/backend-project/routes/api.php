@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\DiseaseController;
+use App\Http\Controllers\PredictionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/test-connection', function () {
@@ -27,3 +29,9 @@ Route::put('/profile', [AuthenticatedSessionController::class, 'updateProfile'])
 
 // Route untuk mengupdate password pengguna yang sedang login
 Route::put('/update-password', [AuthenticatedSessionController::class, 'updatePassword']);
+
+// Route untuk mengambil data penyakit
+Route::get('/diseases', [DiseaseController::class, 'index']);
+Route::get('/diseases/{id}', [DiseaseController::class, 'show']);
+
+Route::post('/predict', [PredictionController::class, 'predict']);

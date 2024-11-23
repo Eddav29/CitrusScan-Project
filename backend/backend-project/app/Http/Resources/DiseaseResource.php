@@ -21,7 +21,7 @@ class DiseaseResource extends JsonResource
             'disease_id' => $this->disease_id,
             'name' => $this->name,
             'description' => $this->description,
-            'treatment' => $this->treatment,
+            'treatments' => DiseaseTreatmentResource::collection($this->treatments),
             'created_at' => Carbon::parse($this->created_at)->translatedFormat('d F Y'),
             'updated_at' => Carbon::parse($this->updated_at)->translatedFormat('d F Y'),
         ];
