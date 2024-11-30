@@ -6,6 +6,7 @@ import '../scan/recent_scan_widget.dart';
 import 'data_jeruk_widget.dart';
 import '../../common/widgets/app_bar.dart';
 import '../history/scan_history_screen.dart';
+import '../search/search_disease.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -90,35 +91,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          height: 40,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.search, color: Colors.grey),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Mulai pencarian Anda',
-                                    border: InputBorder.none,
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigasi ke halaman pencarian penyakit
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SearchDiseaseScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.search, color: Colors.grey),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Mulai pencarian Anda',
+                                    style: TextStyle(color: Colors.grey),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      IconButton(
-                        icon: Icon(Icons.filter_list, color: Color(0xFF215C3C)),
-                        onPressed: () {
-                          print("Filter tapped");
-                        },
                       ),
                     ],
                   ),

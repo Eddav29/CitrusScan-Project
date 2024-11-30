@@ -23,15 +23,37 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     },
   ];
 
-  List<bool> selectedItems =
-      []; // List untuk melacak status terpilih setiap item
-  String sortBy = 'tanggal'; // Default: sort by date
+  List<Map<String, String>> filteredHistory = [];
+  TextEditingController searchController = TextEditingController();
+
+  List<bool> selectedItems = [];
+  String sortBy = 'tanggal';
 
   @override
   void initState() {
     super.initState();
-    selectedItems = List.generate(scanHistory.length,
-        (index) => false); // Inisialisasi status terpilih semua item
+    filteredHistory = List.from(scanHistory);
+    selectedItems = List.generate(scanHistory.length, (index) => false);
+    searchController.addListener(_filterSearchResults);
+  }
+
+  // Fungsi untuk melakukan pencarian
+  void _filterSearchResults() {
+    setState(() {
+      String query = searchController.text.toLowerCase();
+      filteredHistory = scanHistory
+          .where((item) =>
+              item['deteksi']!.toLowerCase().contains(query) ||
+              item['saran']!.toLowerCase().contains(query))
+          .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(_filterSearchResults);
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,9 +62,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
       appBar: AppBar(
         title: Text(
           'Riwayat Deteksi',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color(0xFF215C3C),
         iconTheme: IconThemeData(color: Colors.white),
@@ -58,48 +78,48 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                 // Search bar with icon and text inside one border
                 Expanded(
                   child: Container(
-                    height: 40, // Set height for consistency
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: Colors
-                          .grey[200], // Background color for the search field
-                      borderRadius:
-                          BorderRadius.circular(30), // Rounded corners
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
                       children: [
-                        // Search icon inside the search bar
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Icon(Icons.search, color: Colors.grey),
                         ),
-                        // Search input field
                         Expanded(
                           child: TextField(
+                            controller: searchController,
                             decoration: InputDecoration(
-                              hintText: 'Cari', // Search description
+                              hintText: 'Cari',
                               hintStyle: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black45,
-                              ),
-                              border:
-                                  InputBorder.none, // Remove the default border
+                                  fontSize: 14, color: Colors.black45),
+                              border: InputBorder.none,
                             ),
-                            onChanged: (value) {
-                              // Implement search functionality here if needed
-                            },
                           ),
+                        ),
+                        // Icon to clear search
+                        IconButton(
+                          icon: Icon(Icons.clear, color: Colors.grey),
+                          onPressed: () {
+                            setState(() {
+                              searchController.clear();
+                              filteredHistory = List.from(
+                                  scanHistory); // Reset to original list
+                            });
+                          },
                         ),
                       ],
                     ),
                   ),
                 ),
                 SizedBox(width: 10),
-                // Select All icon (left of sort)
                 IconButton(
                   icon: Icon(Icons.select_all, color: Color(0xFF215C3C)),
                   onPressed: () {
                     setState(() {
-                      // Toggle select all items
                       bool allSelected = selectedItems.every((item) => item);
                       for (int i = 0; i < selectedItems.length; i++) {
                         selectedItems[i] = !allSelected;
@@ -107,7 +127,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     });
                   },
                 ),
-                // Sort icon (right of search)
                 PopupMenuButton<String>(
                   icon: Icon(Icons.sort, color: Color(0xFF215C3C)),
                   onSelected: (value) {
@@ -119,25 +138,20 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     PopupMenuItem(
                       value: 'tanggal',
                       child: Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween, // Align items
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Tanggal'),
-                          if (sortBy == 'tanggal')
-                            Icon(Icons.check,
-                                size: 16), // Checkmark for 'Tanggal'
+                          if (sortBy == 'tanggal') Icon(Icons.check, size: 16),
                         ],
                       ),
                     ),
                     PopupMenuItem(
                       value: 'nama',
                       child: Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween, // Align items
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Nama'),
-                          if (sortBy == 'nama')
-                            Icon(Icons.check, size: 16), // Checkmark for 'Nama'
+                          if (sortBy == 'nama') Icon(Icons.check, size: 16),
                         ],
                       ),
                     ),
@@ -146,12 +160,11 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
               ],
             ),
             SizedBox(height: 16),
-            // ListView of scan history
             Expanded(
               child: ListView.builder(
-                itemCount: scanHistory.length,
+                itemCount: filteredHistory.length,
                 itemBuilder: (context, index) {
-                  var historyItem = scanHistory[index];
+                  var historyItem = filteredHistory[index];
                   return _buildScanHistoryCard(
                     context,
                     imagePath: historyItem['imagePath']!,
@@ -159,7 +172,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     tanggal: historyItem['tanggal']!,
                     saran: historyItem['saran']!,
                     index: index,
-                    isSelected: selectedItems[index], // Pass selection status
+                    isSelected: selectedItems[index],
                   );
                 },
               ),
@@ -170,7 +183,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     );
   }
 
-  // Widget untuk membangun kartu riwayat scan
   Widget _buildScanHistoryCard(
     BuildContext context, {
     required String imagePath,
@@ -178,11 +190,10 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     required String tanggal,
     required String saran,
     required int index,
-    required bool isSelected, // Parameter tambahan untuk status terpilih
+    required bool isSelected,
   }) {
     return GestureDetector(
       onTap: () {
-        // Navigasi ke halaman hasil scan saat kartu diklik
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -191,20 +202,15 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.red.withOpacity(
-                  0.2) // Jika terpilih, beri warna merah transparan
-              : Color(0xFF215C3C)
-                  .withOpacity(0.1), // Warna hijau dengan transparansi
+          color: Color(0xFF215C3C).withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         padding: EdgeInsets.all(16),
-        margin: EdgeInsets.only(bottom: 16), // Margin between cards
+        margin: EdgeInsets.only(bottom: 16),
         child: Stack(
           children: [
             Row(
               children: [
-                // Gambar scan jeruk
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
@@ -215,7 +221,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                   ),
                 ),
                 SizedBox(width: 16),
-                // Kolom teks dengan deteksi, tanggal, saran
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,36 +228,25 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                       Text(
                         deteksi,
                         style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                            fontSize: 17, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        saran, // saran tambahan
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              Colors.black54, // Warna hitam dengan transparansi
-                        ),
+                        saran,
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                       SizedBox(height: 4),
                       Text(
                         tanggal,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black54,
-                        ),
+                        style: TextStyle(fontSize: 15, color: Colors.black54),
                       ),
                     ],
                   ),
                 ),
-                if (isSelected) // Jika item terpilih, tampilkan ikon hapus
+                if (isSelected)
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
-                      // Tampilkan dialog konfirmasi
                       _showDeleteConfirmationDialog(context, index);
                     },
                   ),
@@ -264,7 +258,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     );
   }
 
-  // Menampilkan dialog konfirmasi sebelum menghapus item
   void _showDeleteConfirmationDialog(BuildContext context, int index) {
     showDialog(
       context: context,
@@ -272,27 +265,23 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
         return AlertDialog(
           title: Text('Hapus deteksi ini?'),
           actions: <Widget>[
-            // Tombol Batalkan dengan font abu-abu
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey, // Warna teks tombol Batalkan
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey),
               onPressed: () {
-                Navigator.of(context).pop(); // Menutup dialog tanpa menghapus
+                Navigator.of(context).pop();
               },
               child: Text('Batalkan'),
             ),
-            // Tombol Hapus dengan font merah
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red, // Warna teks tombol Hapus
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               onPressed: () {
                 setState(() {
-                  scanHistory.removeAt(index); // Hapus item dari daftar
-                  selectedItems.removeAt(index); // Hapus status terpilih
+                  scanHistory.removeAt(index);
+                  selectedItems.removeAt(index);
+                  filteredHistory =
+                      List.from(scanHistory); // Reset filtered list
                 });
-                Navigator.of(context).pop(); // Menutup dialog setelah hapus
+                Navigator.of(context).pop();
               },
               child: Text('Hapus'),
             ),
