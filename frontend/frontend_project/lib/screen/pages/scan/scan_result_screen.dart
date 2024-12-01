@@ -12,7 +12,6 @@ class ScanResultScreen extends StatefulWidget {
 }
 
 class _ScanResultScreenState extends State<ScanResultScreen> {
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -185,21 +184,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             child: Container(
               padding: EdgeInsets.all(2.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.transparent,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
               ),
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
                 onPressed: () {
-                  GoRouter.of(context).pop();
+                  Navigator.pop(context);
                 },
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
               ),
             ),
           ),
