@@ -1,23 +1,26 @@
 import 'package:dio/dio.dart';
+import 'history.dart';
 
-class DiseaseDataApi {
+class HistoryApi {
   final Dio _dio;
 
-  DiseaseDataApi(this._dio);
+  HistoryApi(this._dio);
 
-  Future<List<dynamic>> getDiseases() async {
+  Future<List<History>> fetchUserHistory(int userId) async {
     try {
-      final response = await _dio.get('/disease');
-      return response.data;
+      final response = await _dio.get('/user/$userId/history');
+      final data = response.data['data'] as List;
+      return data.map((history) => History.fromJson(history)).toList();
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<Map<String, dynamic>> getDiseaseDetails(int id) async {
+  Future<HistoryDetail> fetchUserHistoryDetail(int userId, int historyId) async {
     try {
-      final response = await _dio.get('/disease/$id');
-      return response.data;
+      final response = await _dio.get('/user/$userId/history/$historyId');
+      final data = response.data['data'];
+      return HistoryDetail.fromJson(data);
     } on DioException catch (e) {
       throw _handleError(e);
     }
