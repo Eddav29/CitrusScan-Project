@@ -1,17 +1,17 @@
-import 'dart:io'; // Untuk menampilkan file gambar
+import 'dart:io'; // For displaying image files
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ScanResultScreen extends StatefulWidget {
-  final String imagePath; // Menerima path gambar yang di-scan
+class DiseaseScreen extends StatefulWidget {
+  final String imagePath; // Receives the scanned image path
 
-  ScanResultScreen({required this.imagePath});
+  DiseaseScreen({required this.imagePath});
 
   @override
-  _ScanResultScreenState createState() => _ScanResultScreenState();
+  _DiseaseScreenState createState() => _DiseaseScreenState();
 }
 
-class _ScanResultScreenState extends State<ScanResultScreen> {
+class _DiseaseScreenState extends State<DiseaseScreen> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -24,7 +24,8 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.file(
-                File(widget.imagePath), // Menggunakan path gambar yang diterima
+                File(widget
+                    .imagePath), // Displaying the image based on the path received
                 height: screenHeight * 0.45,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -33,7 +34,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             ],
           ),
           Positioned(
-            top: screenHeight * 0.4,
+            top: screenHeight * 0.45,
             left: 0,
             right: 0,
             bottom: 0,
@@ -58,75 +59,6 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.grey[200],
-                            child: Icon(Icons.bug_report,
-                                size: 30, color: Colors.white),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Black Spot',
-                                  style: TextStyle(
-                                    fontFamily: 'Black Spot',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Penyakit bercak hitam yang menyerang daun jeruk.',
-                                  style: TextStyle(
-                                    fontFamily: 'Gilroy',
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextSpan(
-                            text:
-                                ' Hasil ini didiagnosis secara otomatis. Harap konfirmasikan bahwa '
-                                'masalah tanaman mencerminkan gejala yang dijelaskan sebelum mengambil tindakan.',
-                            style: TextStyle(
-                              color: Colors.black.withOpacity(0.7),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16),
                     buildInfoBox(
                       title: 'Ringkasan',
                       content:
@@ -184,65 +116,25 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             child: Container(
               padding: EdgeInsets.all(2.0),
               decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: Colors.white,
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 5,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
                 onPressed: () {
-                  Navigator.pop(context);
+                  GoRouter.of(context).pop();
                 },
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
               ),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF215C3C),
-                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: Size(0, 56),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.center_focus_strong,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Deteksi Lagi',
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

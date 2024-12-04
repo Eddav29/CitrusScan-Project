@@ -244,7 +244,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Implement forgot password functionality
+                             context.go('/resetPassword');
                           },
                           child: Text(
                             "Lupa Sandi?",
