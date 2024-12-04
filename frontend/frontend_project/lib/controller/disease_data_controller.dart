@@ -14,7 +14,7 @@ class DiseaseDataController extends StateNotifier<DiseaseDataState> {
       state = state.copyWith(isLoading: true);
       final diseases = await _diseaseDataApi.getDiseases();
       final diseaseDataList = diseases.map((disease) => DiseaseData.fromJson(disease)).toList();
-      state = state.copyWith(diseaseData: diseaseDataList, isLoading: false);
+      state = state.copyWith(diseaseDataList: diseaseDataList, isLoading: false);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
