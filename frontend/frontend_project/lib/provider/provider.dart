@@ -13,6 +13,7 @@ import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
 import 'package:citrus_scan/data/model/user/auth_state.dart';
+import 'package:citrus_scan/data/model/user/profile/profile_state.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
