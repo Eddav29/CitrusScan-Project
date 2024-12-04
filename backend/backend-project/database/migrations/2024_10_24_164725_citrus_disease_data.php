@@ -11,14 +11,52 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('citrus_disease_data', function (Blueprint $table) {
+        // Tabel untuk data penyakit
+        Schema::create('diseases', function (Blueprint $table) {
             $table->uuid('disease_id')->primary();
-            $table->string('disease_name');
-            $table->text('description');
-            $table->string('symptoms');
-            $table->string('prevention');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('treatment')->nullable();
             $table->timestamps();
+        });
+
+        // Tabel untuk langkah perawatan penyakit
+        Schema::create('disease_treatments', function (Blueprint $table) {
+            $table->uuid('disease_treatments_id')->primary();
+            $table->uuid('disease_id');
+            $table->integer('step'); // Urutan langkah
+            $table->text('action'); // Deskripsi langkah
+            $table->timestamps();
+
+            // Relasi ke tabel diseases
+            $table->foreign('disease_id')->references('disease_id')->on('diseases')->onDelete('cascade');
+        });
+
+        // Tabel untuk prediksi penyakit
+        Schema::create('predictions', function (Blueprint $table) {
+            $table->uuid('prediction_id')->primary();
+            $table->uuid('disease_id')->nullable(); // Penyakit dengan probabilitas tertinggi
+            $table->uuid('second_best_disease')->nullable(); // Penyakit kedua (opsional)
+            $table->float('confidence'); // Probabilitas tertinggi
+            $table->uuid('second_best_disease_confidence'); // Probabilitas kedua (opsional)
+            $table->timestamps();
+
+            // Relasi ke tabel diseases
+            $table->foreign('disease_id')->references('disease_id')->on('diseases')->onDelete('set null');
+            $table->foreign('second_best_disease')->references('disease_id')->on('diseases')->onDelete('set null');
+        });
+
+        // Tabel untuk riwayat pengguna
+        Schema::create('user_histories', function (Blueprint $table) {
+            $table->uuid('user_histories_id')->primary(); // ID unik untuk riwayat
+            $table->uuid('user_id'); // Referensi ke tabel users
+            $table->uuid('prediction_id'); // Referensi ke tabel predictions
+            $table->text('image_path'); // Lokasi gambar yang diunggah pengguna
+            $table->timestamp('created_at');// Waktu unggah gambar
+            $table->timestamp('updated_at')->nullable();
+            // Foreign keys
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('prediction_id')->references('prediction_id')->on('predictions')->onDelete('cascade');
         });
     }
 
@@ -27,7 +65,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('citrus_disease_data');
+        // Drop tables in reverse order to avoid foreign key constraint issues
+        Schema::dropIfExists('user_histories');
+        Schema::dropIfExists('predictions');
+        Schema::dropIfExists('disease_treatments');
+        Schema::dropIfExists('diseases');
     }
 };

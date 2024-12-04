@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, HasUuids;
@@ -18,6 +19,8 @@ class User extends Authenticatable
      * @var string
      */
     protected $primaryKey = 'user_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -28,8 +31,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'remember_token',   // Add remember_token to fillable
-        'email_verified_at' // Add email_verified_at to fillable
+        'remember_token',   
+        'email_verified_at',
+        'profile_picture',
     ];
     
 
@@ -54,5 +58,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(UserHistory::class, 'user_id');
     }
 }

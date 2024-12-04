@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Hash;
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -18,6 +20,8 @@ class AuthenticatedSessionController extends Controller
         
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        
 
         return response()->json([
             'access_token' => $token,
@@ -48,4 +52,88 @@ class AuthenticatedSessionController extends Controller
 
         return response()->json(['message' => 'Logout successful']);
     }
+
+    public function profile(Request $request)
+    {
+        // Ambil token dari header Authorization
+        $token = $request->bearerToken();
+        \Log::info($token);
+        $accessToken = PersonalAccessToken::findToken($token);
+        \Log::info($accessToken);
+        // Periksa apakah token valid
+        if (!$accessToken || !$accessToken->tokenable) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+    
+        // Ambil pengguna dari token
+        $user = $accessToken->tokenable;
+    
+        return response()->json(['user' => $user], 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        // Ambil token dari header Authorization
+        $token = $request->bearerToken();
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        // Periksa apakah token valid
+        if (!$accessToken || !$accessToken->tokenable) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        // Ambil pengguna dari token
+        $user = $accessToken->tokenable;
+
+        // Validasi input
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->getKey() . ',user_id', 
+        ]);
+
+        // Update pengguna
+        if ($request->has('name')) {
+            $user->name = $request->input('name');
+        }
+        if ($request->has('email')) {
+            $user->email = $request->input('email');
+        }
+        $user->save();
+
+        return response()->json(['user' => $user], 200);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        // Ambil token dari header Authorization
+        $token = $request->bearerToken();
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        // Periksa apakah token valid
+        if (!$accessToken || !$accessToken->tokenable) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        // Ambil pengguna dari token
+        $user = $accessToken->tokenable;
+
+        // Validasi input
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Periksa apakah password lama cocok
+        if (!Hash::check($request->input('old_password'), $user->password)) {
+            return response()->json(['error' => 'Old password is incorrect'], 400);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return response()->json(['message' => 'Password updated successfully'], 200);
+    }
+    
+    
 }

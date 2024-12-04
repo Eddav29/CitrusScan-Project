@@ -73,6 +73,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return null;
   }
 
+  Future<void> _handleGoogleLogin() async {
+    setState(() => _isLoading = true);
+
+    try {
+      await ref.read(authControllerProvider.notifier).loginWithGoogle();
+      if (mounted) {
+        context.go('/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Google Login gagal: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,7 +244,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Implement forgot password functionality
+                             context.go('/resetPassword');
                           },
                           child: Text(
                             "Lupa Sandi?",
@@ -264,13 +287,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     SizedBox(height: 20),
 
-                    // Google Login Button
+                   // Google Login Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: _isLoading ? null : () {
-                          // Implement Google login
-                        },
+                        onPressed: _isLoading ? null : _handleGoogleLogin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 16),

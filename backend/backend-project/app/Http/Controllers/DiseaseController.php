@@ -2,102 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DiseaseData;
+use App\Models\Disease;
+use App\Models\DiseaseTreatment;
 use Illuminate\Http\Request;
-use App\Http\Resources\DiseaseResource;
 
 class DiseaseController extends Controller
 {
+    // 1. Menampilkan daftar nama penyakit saja
     public function index()
     {
-        $diseases = DiseaseData::all();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Diseases fetched successfully',
-            'data'    => DiseaseResource::collection($diseases),
-        ], 200); // Status 200 OK
+        $diseases = Disease::all(['disease_id', 'name','created_at','updated_at']);
+        return response()->json($diseases, 200);
     }
 
+    // 2. Menampilkan detail penyakit beserta langkah perawatannya
     public function show($id)
-    {
-        $disease = DiseaseData::find($id);
+{
+    $disease = Disease::with('treatments')->find($id);
 
-        if ($disease) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Disease found successfully',
-                'data'    => new DiseaseResource($disease),
-            ], 200); // Status 200 OK
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Disease not found',
-        ], 404); // Status 404 Not Found
+    if (!$disease) {
+        return response()->json(['message' => 'Disease not found'], 404);
     }
 
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'disease_name'   => 'required|string',
-            'description'    => 'required|string',
-            'symptoms'       => 'required|string',
-            'prevention'     => 'required|string',
-        ]);
+    
 
-        $disease = DiseaseData::create($validatedData);
+    return response()->json([
+        'name' => $disease->name,
+        'description' => $disease->description,
+        'treatment' => $disease->treatment,
+        'steps' => $disease->treatments->map(function ($treatment) {
+            return [
+                'step' => $treatment->step,
+                'action' => $treatment->action,
+            ];
+        }),
+    ]);
+}
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Disease created successfully',
-            'data'    => new DiseaseResource($disease),
-        ], 201); // Status 201 Created
-    }
-
-    public function update(Request $request, $id)
-    {
-        $disease = DiseaseData::find($id);
-
-        if (!$disease) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Disease not found',
-            ], 404); // Status 404 Not Found
-        }
-
-        $validatedData = $request->validate([
-            'disease_name'   => 'sometimes|string',
-            'description'    => 'sometimes|string',
-            'symptoms'       => 'sometimes|string',
-            'prevention'     => 'sometimes|string',
-        ]);
-
-        $disease->update($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Disease updated successfully',
-            'data'    => new DiseaseResource($disease),
-        ], 200); // Status 200 OK
-    }
-
-    public function destroy($id)
-    {
-        $disease = DiseaseData::find($id);
-
-        if (!$disease) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Disease not found',
-            ], 404); // Status 404 Not Found
-        }
-
-        $disease->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Disease deleted successfully',
-        ], 200); // Status 200 OK
-    }
 }
