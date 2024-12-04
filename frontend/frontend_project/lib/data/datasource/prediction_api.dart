@@ -1,11 +1,13 @@
+import 'package:citrus_scan/data/model/prediction/prediction.dart';
 import 'package:dio/dio.dart';
+
 
 class PredictionApi {
   final Dio _dio;
 
   PredictionApi(this._dio);
 
-  Future<Map<String, dynamic>> predict({
+  Future<Prediction> predict({
     required String image,
   }) async {
     try {
@@ -16,7 +18,7 @@ class PredictionApi {
         },
       );
 
-      return response.data;
+      return Prediction.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -32,5 +34,4 @@ class PredictionApi {
     }
     return Exception('Tidak dapat terhubung ke server. Periksa koneksi Anda.');
   }
-  
 }
