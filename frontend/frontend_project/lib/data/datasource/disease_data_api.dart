@@ -1,23 +1,26 @@
 import 'package:dio/dio.dart';
+import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
 
 class DiseaseDataApi {
   final Dio _dio;
 
   DiseaseDataApi(this._dio);
 
-  Future<List<dynamic>> getDiseases() async {
+  Future<List<DiseaseData>> getDiseases() async {
     try {
       final response = await _dio.get('/disease');
-      return response.data;
+      final data = response.data as List;
+      return data.map((disease) => DiseaseData.fromJson(disease)).toList();
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<Map<String, dynamic>> getDiseaseDetails(int id) async {
+  Future<DiseaseData> getDiseaseDetails(int id) async {
     try {
       final response = await _dio.get('/disease/$id');
-      return response.data;
+      final data = response.data;
+      return DiseaseData.fromJson(data);
     } on DioException catch (e) {
       throw _handleError(e);
     }

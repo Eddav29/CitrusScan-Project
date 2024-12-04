@@ -1,5 +1,5 @@
+import 'package:citrus_scan/data/model/history/history.dart';
 import 'package:dio/dio.dart';
-import 'history.dart';
 
 class HistoryApi {
   final Dio _dio;
