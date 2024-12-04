@@ -1,3 +1,4 @@
+import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/datasource/history_api.dart';
