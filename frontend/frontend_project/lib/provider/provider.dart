@@ -3,10 +3,12 @@ import 'package:citrus_scan/controller/history_controller.dart';
 import 'package:citrus_scan/controller/prediction_controller.dart';
 import 'package:citrus_scan/controller/auth_controller.dart';
 import 'package:citrus_scan/controller/disease_data_controller.dart';
+import 'package:citrus_scan/controller/profile_controller.dart';
 import 'package:citrus_scan/data/datasource/disease_data_api.dart';
 import 'package:citrus_scan/data/datasource/history_api.dart';
 import 'package:citrus_scan/data/datasource/prediction_api.dart';
 import 'package:citrus_scan/data/datasource/auth_api.dart';
+import 'package:citrus_scan/data/datasource/profile_api.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
@@ -86,4 +88,15 @@ final historyControllerProvider =
     StateNotifierProvider<HistoryController, HistoryState>((ref) {
   final historyApi = ref.watch(historyApiProvider);
   return HistoryController(historyApi);
+});
+
+final profileApiProvider = Provider<ProfileApi>((ref) {
+  final dio = ref.watch(dioProvider);
+  return ProfileApi(dio);
+});
+
+final profileControllerProvider =
+    StateNotifierProvider<ProfileController, ProfileState>((ref) {
+  final profileApi = ref.watch(profileApiProvider);
+  return ProfileController(profileApi);
 });
