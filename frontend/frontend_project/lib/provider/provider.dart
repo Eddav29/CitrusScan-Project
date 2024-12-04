@@ -1,7 +1,9 @@
-// lib/provider/providers.dart
 import 'dart:io';
+import 'package:citrus_scan/controller/prediction_controller.dart';
 import 'package:citrus_scan/data/datasource/disease_data_api.dart';
+import 'package:citrus_scan/data/datasource/prediction_api.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
+import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
 import 'package:citrus_scan/data/model/user/auth_state.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,4 +59,15 @@ final diseaseDataControllerProvider =
     StateNotifierProvider<DiseaseDataController, DiseaseDataState>((ref) {
   final diseaseDataApi = ref.watch(diseaseDataApiProvider);
   return DiseaseDataController(diseaseDataApi);
+});
+
+final predictionApiProvider = Provider<PredictionApi>((ref) {
+  final dio = ref.watch(dioProvider);
+  return PredictionApi(dio);
+});
+
+final predictionControllerProvider =
+    StateNotifierProvider<PredictionController, PredictionState>((ref) {
+  final predictionApi = ref.watch(predictionApiProvider);
+  return PredictionController(predictionApi);
 });
