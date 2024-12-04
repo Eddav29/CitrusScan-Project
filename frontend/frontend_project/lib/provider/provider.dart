@@ -1,16 +1,21 @@
 import 'dart:io';
+import 'package:citrus_scan/controller/history_controller.dart';
 import 'package:citrus_scan/controller/prediction_controller.dart';
+import 'package:citrus_scan/controller/auth_controller.dart';
+import 'package:citrus_scan/controller/disease_data_controller.dart';
 import 'package:citrus_scan/data/datasource/disease_data_api.dart';
+import 'package:citrus_scan/data/datasource/history_api.dart';
 import 'package:citrus_scan/data/datasource/prediction_api.dart';
+import 'package:citrus_scan/data/datasource/auth_api.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
+import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
 import 'package:citrus_scan/data/model/user/auth_state.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:citrus_scan/data/datasource/auth_api.dart';
-import 'package:citrus_scan/controller/auth_controller.dart';
-import 'package:citrus_scan/controller/disease_data_controller.dart';
+
+
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
@@ -70,4 +75,15 @@ final predictionControllerProvider =
     StateNotifierProvider<PredictionController, PredictionState>((ref) {
   final predictionApi = ref.watch(predictionApiProvider);
   return PredictionController(predictionApi);
+});
+
+final historyApiProvider = Provider<HistoryApi>((ref) {
+  final dio = ref.watch(dioProvider);
+  return HistoryApi(dio);
+});
+
+final historyControllerProvider =
+    StateNotifierProvider<HistoryController, HistoryState>((ref) {
+  final historyApi = ref.watch(historyApiProvider);
+  return HistoryController(historyApi);
 });
