@@ -1,5 +1,5 @@
 
-import 'package:citrus_scan/data/model/user.dart';
+import 'package:citrus_scan/data/model/user/user.dart';
 
 class AuthState {
   final User? user;

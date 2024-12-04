@@ -29,7 +29,32 @@ class AuthApi {
     return response.data;
   }
 
-    Future<Map<String, dynamic>> login({
+Future<Map<String, dynamic>> loginWithGoogle({required String token}) async {
+  try {
+    // Kirim token sebagai Authorization Bearer
+    final response = await _dio.post(
+      '/api/auth/google/callback',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    final responseData = response.data as Map<String, dynamic>;
+    return {
+      'access_token': responseData['access_token'],
+      'user': responseData['user'],
+    };
+  } on DioException catch (e) {
+    throw _handleError(e);
+  }
+}
+
+
+
+  Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {

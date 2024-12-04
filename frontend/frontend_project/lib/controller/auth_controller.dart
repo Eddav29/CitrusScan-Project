@@ -1,12 +1,12 @@
 // lib/controller/auth_controller.dart
 import 'dart:convert';
 
-import 'package:citrus_scan/data/model/auth_state.dart';
-import 'package:citrus_scan/data/model/user.dart';
-import 'package:citrus_scan/provider/provider.dart';
+import 'package:citrus_scan/data/model/user/auth_state.dart';
+import 'package:citrus_scan/data/model/user/user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:citrus_scan/data/datasource/auth_api.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final AuthApi _authApi;
@@ -31,6 +31,51 @@ class AuthController extends StateNotifier<AuthState> {
         await _prefs.remove('token');
         await _prefs.remove('user');
       }
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    // Tambahkan clientId yang sesuai dengan Android Credential
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: '696697329060-oj4epjq42tgqjr81h9h78vfa97hkhurf.apps.googleusercontent.com',
+    );
+
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+
+      // Lakukan proses sign-in menggunakan Google
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        state = state.copyWith(isLoading: false);
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        state = state.copyWith(isLoading: false, error: 'ID Token tidak ditemukan');
+        return;
+      }
+
+      // Kirim token ke backend Laravel
+      final response = await _authApi.loginWithGoogle(token: idToken);
+
+      // Simpan token dan data pengguna
+      final user = User.fromJson(response['user'] as Map<String, dynamic>);
+      final token = response['access_token'] as String;
+
+      await _prefs.setString('token', token);
+      await _prefs.setString('user', jsonEncode(user.toJson()));
+
+      state = state.copyWith(
+        isLoading: false,
+        user: user,
+        token: token,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
     }
   }
 
