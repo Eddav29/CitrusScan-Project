@@ -1,30 +1,38 @@
+import 'package:citrus_scan/data/datasource/disease_data_api.dart';
+import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
+import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
-import 'package:citrus_scan/data/datasource/disease_data_api.dart';
 
 class DiseaseDataController extends StateNotifier<DiseaseDataState> {
   final DiseaseDataApi _diseaseDataApi;
 
-  DiseaseDataController(this._diseaseDataApi) : super(DiseaseDataState());
+  DiseaseDataController(this._diseaseDataApi) : super(const DiseaseDataInitial());
 
   Future<void> fetchDiseases() async {
     try {
-      state = state.copyWith(isLoading: true);
-      final diseaseDataList = await _diseaseDataApi.getDiseases();
-      state = state.copyWith(diseaseDataList: diseaseDataList, isLoading: false);
+      state = const DiseaseDataLoading();
+      final diseases = await _diseaseDataApi.getDiseases();
+      state = DiseaseDataListSuccess(diseases);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = DiseaseDataError(e.toString());
     }
   }
 
-  Future<void> fetchDiseaseDetails(int id) async {
+  Future<void> fetchDiseaseDetails(String id) async {
     try {
-      state = state.copyWith(isLoading: true);
-      final diseaseData = await _diseaseDataApi.getDiseaseDetails(id);
-      state = state.copyWith(diseaseData: diseaseData, isLoading: false);
+      state = const DiseaseDataLoading();
+      final diseaseDetail = await _diseaseDataApi.getDiseaseDetails(id);
+      state = DiseaseDataDetailSuccess(DiseaseData(
+        diseaseId: id,
+        name: diseaseDetail.name,
+        description: diseaseDetail.description,
+        treatment: diseaseDetail.treatment,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ));
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = DiseaseDataError(e.toString());
     }
   }
 }

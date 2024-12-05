@@ -1,27 +1,45 @@
 import 'package:flutter/material.dart';
 import '../../common/widgets/navigation_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/provider/provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  String? selectedSetting; // To keep track of the selected setting
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  String? selectedSetting;
+
+  void _handleLogout() async {
+    final authController = ref.read(authControllerProvider.notifier);
+    await authController.logout();
+    if (mounted) {
+      context.go('/login');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final user = authState.user;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Color(0xFF215C3C),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _handleLogout,
+          ),
+        ],
       ),
       bottomNavigationBar: CustomNavigationBar(),
       body: Stack(
         children: [
-          // Green background with curved bottom
           Container(
             height: 180,
             decoration: BoxDecoration(
@@ -31,12 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          // Scrollable content
           SingleChildScrollView(
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 5.0), // Reduced top padding
+                padding: const EdgeInsets.only(top: 5.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
@@ -54,7 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Profile Picture
                       Center(
                         child: Container(
                           width: 100,
@@ -72,12 +88,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      // Name and Email
                       Center(
                         child: Column(
                           children: [
                             Text(
-                              'Ricardo Joseph',
+                              user?.name ?? 'Guest User',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -88,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'ricardojoseph@gmail.com',
+                                  user?.email ?? 'No email',
                                   style: TextStyle(color: Colors.black54),
                                 ),
                                 SizedBox(width: 5),
@@ -98,44 +113,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      // Divider between Profile and Settings
-                      Divider(
-                        color: Colors.grey[300],
-                        thickness: 1,
+                      Divider(),
+                      ListTile(
+                        leading: Icon(Icons.person_outline, color: Color(0xFF215C3C)),
+                        title: Text('Edit Profile'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle edit profile
+                        },
                       ),
-                      SizedBox(height: 10),
-                      // Settings Header
-                      Text(
-                        'Settings',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      ListTile(
+                        leading: Icon(Icons.notifications_outlined, color: Color(0xFF215C3C)),
+                        title: Text('Notifications'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle notifications
+                        },
                       ),
-                      SizedBox(height: 10),
-                      // Profile Settings Section
-                      _buildSettingsSection(
-                        icon: Icons.edit,
-                        title: 'Edit Profile',
-                        subtitle: 'Update and modify your profile',
-                        identifier: 'edit_profile',
+                      ListTile(
+                        leading: Icon(Icons.security_outlined, color: Color(0xFF215C3C)),
+                        title: Text('Security'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle security
+                        },
                       ),
-                      SizedBox(height: 10),
-                      // Privacy Section
-                      _buildSettingsSection(
-                        icon: Icons.lock,
-                        title: 'Privacy',
-                        subtitle: 'Change your password',
-                        identifier: 'change_password',
-                      ),
-                      SizedBox(height: 10),
-                      // Logout Section
-                      _buildSettingsSection(
-                        icon: Icons.logout,
-                        title: 'Logout',
-                        subtitle: 'Logout from your account',
-                        identifier: 'logout',
+                      ListTile(
+                        leading: Icon(Icons.help_outline, color: Color(0xFF215C3C)),
+                        title: Text('Help Center'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle help center
+                        },
                       ),
                     ],
                   ),
@@ -144,75 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // Helper widget to build settings sections
-  Widget _buildSettingsSection({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String identifier,
-  }) {
-    final isSelected = selectedSetting == identifier;
-    final isLogout = identifier == 'logout';
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedSetting = identifier;
-          if (identifier == 'logout') {
-            // Add a delay before navigating to avoid flickering effect
-            Future.delayed(Duration(milliseconds: 300), () {
-              context.go('/login'); // Navigate to login screen after a delay
-            });
-          } else if (identifier == 'edit_profile') {
-            context.go('/profileEdit'); // Replace with your desired route
-          } else if (identifier == 'change_password') {
-            context.go('/changePassword'); // Replace with your desired route
-          }
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected ? (isLogout ? Colors.red : Color(0xFF215C3C)) : Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? Colors.black26 : Colors.black12,
-              blurRadius: isSelected ? 8 : 4,
-              offset: Offset(0, isSelected ? 6 : 2),
-            ),
-          ],
-        ),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: isSelected ? Colors.white : (isLogout ? Colors.red[100] : Colors.grey[200]),
-            child: Icon(
-              icon,
-              color: isLogout ? Colors.red : (isSelected ? Color(0xFF215C3C) : Color(0xFF215C3C)),
-            ),
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              color: isSelected ? (isLogout ? Colors.white : Colors.white) : (isLogout ? Colors.red : Colors.black87),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Text(
-            subtitle,
-            style: TextStyle(
-              color: isSelected ? (isLogout ? Colors.white70 : Colors.white70) : (isLogout ? Colors.red[300] : Colors.black54),
-            ),
-          ),
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: isSelected ? (isLogout ? Colors.white : Colors.white) : Colors.grey[600],
-          ),
-        ),
       ),
     );
   }

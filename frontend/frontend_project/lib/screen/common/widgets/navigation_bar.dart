@@ -1,3 +1,4 @@
+import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:citrus_scan/screen/pages/scan/widgets/scan_option_modal.dart';
@@ -13,11 +14,31 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   final ImagePicker _picker = ImagePicker();
 
   // Function to handle picking from camera or gallery
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
-    if (pickedFile != null) {
-      // Navigasi ke halaman ResultScreen dengan go_router
-      context.go('/result', extra: pickedFile.path); // Mengirim path gambar ke ResultScreen
+  Future<void> _handleImageSelection() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScanResultScreen(imagePath: image.path),
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleCameraCapture() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+
+    if (photo != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScanResultScreen(imagePath: photo.path),
+        ),
+      );
     }
   }
 
@@ -28,7 +49,11 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       builder: (BuildContext context) {
         return ScanOptionsModal(
           onImageSourceSelected: (ImageSource source) {
-            _pickImage(source);
+            if (source == ImageSource.gallery) {
+              _handleImageSelection();
+            } else if (source == ImageSource.camera) {
+              _handleCameraCapture();
+            }
           },
         );
       },

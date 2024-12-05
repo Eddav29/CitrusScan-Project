@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
+import 'package:dio/dio.dart';
 
 class DiseaseDataApi {
   final Dio _dio;
@@ -9,31 +9,41 @@ class DiseaseDataApi {
   Future<List<DiseaseData>> getDiseases() async {
     try {
       final response = await _dio.get('/disease');
-      final data = response.data as List;
-      return data.map((disease) => DiseaseData.fromJson(disease)).toList();
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => DiseaseData.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load diseases');
+      }
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw Exception(e.response?.data['message'] ?? 'Failed to connect to server');
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
     }
   }
 
-  Future<DiseaseData> getDiseaseDetails(int id) async {
+  Future<DiseaseDetail> getDiseaseDetails(String diseaseId) async {
     try {
-      final response = await _dio.get('/disease/$id');
-      final data = response.data;
-      return DiseaseData.fromJson(data);
+      final response = await _dio.get('/disease/$diseaseId');
+      
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        return DiseaseDetail(
+          name: data['name'],
+          description: data['description'],
+          treatment: data['treatment'],
+          steps: (data['steps'] as List)
+              .map((step) => TreatmentStep.fromJson(step))
+              .toList(),
+        );
+      } else {
+        throw Exception('Failed to load disease details');
+      }
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw Exception(e.response?.data['message'] ?? 'Failed to connect to server');
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
     }
-  }
-
-  Exception _handleError(DioException e) {
-    if (e.response != null) {
-      final errorData = e.response?.data;
-      final errorMessage = errorData is Map
-          ? errorData['message'] ?? 'Terjadi kesalahan'
-          : 'Terjadi kesalahan';
-      return Exception(errorMessage);
-    }
-    return Exception('Tidak dapat terhubung ke server. Periksa koneksi Anda.');
   }
 }

@@ -73,27 +73,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return null;
   }
 
-  Future<void> _handleGoogleLogin() async {
-    setState(() => _isLoading = true);
+  // Future<void> _handleGoogleLogin() async {
+  //   setState(() => _isLoading = true);
 
-    try {
-      await ref.read(authControllerProvider.notifier).loginWithGoogle();
-      if (mounted) {
-        context.go('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google Login gagal: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
+  //   try {
+  //     await ref.read(authControllerProvider.notifier).loginWithGoogle();
+  //     if (mounted) {
+  //       context.go('/home');
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Google Login gagal: $e'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     setState(() => _isLoading = false);
+  //   }
+  // }
 
 
   @override
@@ -287,34 +287,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     SizedBox(height: 20),
 
-                   // Google Login Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _isLoading ? null : _handleGoogleLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(color: Color(0xFF215C3C)),
-                          ),
-                        ),
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          height: 24,
-                          width: 24,
-                        ),
-                        label: Text(
-                          "Login with Google",
-                          style: TextStyle(
-                            color: Color(0xFF215C3C),
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                  //  // Google Login Button
+                  //   SizedBox(
+                  //     width: double.infinity,
+                  //     child: ElevatedButton.icon(
+                  //       onPressed: _isLoading ? null : _handleGoogleLogin,
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: Colors.white,
+                  //         padding: EdgeInsets.symmetric(vertical: 16),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(10),
+                  //           side: BorderSide(color: Color(0xFF215C3C)),
+                  //         ),
+                  //       ),
+                  //       icon: Image.asset(
+                  //         'assets/images/google.png',
+                  //         height: 24,
+                  //         width: 24,
+                  //       ),
+                  //       label: Text(
+                  //         "Login with Google",
+                  //         style: TextStyle(
+                  //           color: Color(0xFF215C3C),
+                  //           fontSize: 16,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   SizedBox(height: 20),
 
                     // Sign Up Link
                     Row(

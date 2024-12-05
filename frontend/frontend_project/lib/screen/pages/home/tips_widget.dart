@@ -54,7 +54,6 @@ class TipsWidget extends StatelessWidget {
                 ],
               ),
             ),
-
             // Ikon untuk refresh atau reload (belum ada di kode, bisa ditambahkan jika perlu)
           ],
         ),
