@@ -1,83 +1,32 @@
 // lib/controller/auth_controller.dart
 import 'dart:convert';
-
 import 'package:citrus_scan/data/model/user/auth_state.dart';
 import 'package:citrus_scan/data/model/user/user.dart';
+import 'package:citrus_scan/services/shared_preferences_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:citrus_scan/data/datasource/auth_api.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final AuthApi _authApi;
-  final SharedPreferences _prefs;
+  final SharedPreferencesService _prefsService;
 
-  AuthController(this._authApi, this._prefs) : super(AuthState()) {
+  AuthController(this._authApi, this._prefsService) : super(AuthState()) {
     _initializeAuth();
   }
 
   Future<void> _initializeAuth() async {
-    final token = _prefs.getString('token');
-    final userData = _prefs.getString('user');
+    final token = await _prefsService.getToken();
+    final user = await _prefsService.getUser();
 
-    if (token != null && userData != null) {
-      try {
-        final user = User.fromJson(jsonDecode(userData));
-        state = state.copyWith(
-          token: token,
-          user: user,
-        );
-      } catch (e) {
-        await _prefs.remove('token');
-        await _prefs.remove('user');
-      }
-    }
-  }
-
-  Future<void> loginWithGoogle() async {
-    // Tambahkan clientId yang sesuai dengan Android Credential
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: '696697329060-oj4epjq42tgqjr81h9h78vfa97hkhurf.apps.googleusercontent.com',
-    );
-
-    try {
-      state = state.copyWith(isLoading: true, error: null);
-
-      // Lakukan proses sign-in menggunakan Google
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        state = state.copyWith(isLoading: false);
-        return;
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final String? idToken = googleAuth.idToken;
-
-      if (idToken == null) {
-        state = state.copyWith(isLoading: false, error: 'ID Token tidak ditemukan');
-        return;
-      }
-
-      // Kirim token ke backend Laravel
-      final response = await _authApi.loginWithGoogle(token: idToken);
-
-      // Simpan token dan data pengguna
-      final user = User.fromJson(response['user'] as Map<String, dynamic>);
-      final token = response['access_token'] as String;
-
-      await _prefs.setString('token', token);
-      await _prefs.setString('user', jsonEncode(user.toJson()));
-
+    if (token != null && user != null) {
       state = state.copyWith(
-        isLoading: false,
-        user: user,
         token: token,
+        user: user,
       );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-      rethrow;
     }
   }
+
 
   Future<void> register({
     required String email,
@@ -88,13 +37,9 @@ class AuthController extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      // Generate a remember_token (could be any unique string or random token generator)
       final rememberToken = _generateRememberToken();
-
-      // Ensure the email_verified_at is set to the current date if null
       final emailVerifiedAt = DateTime.now().toIso8601String();
 
-      // API registration call
       final response = await _authApi.register(
         email: email,
         password: password,
@@ -107,11 +52,9 @@ class AuthController extends StateNotifier<AuthState> {
       final user = User.fromJson(response);
       final token = response['token'];
 
-      // Save token and user data to SharedPreferences
-      await _prefs.setString('token', token);
-      await _prefs.setString('user', jsonEncode(user.toJson()));
+      await _prefsService.setToken(token);
+      await _prefsService.setUser(user);
 
-      // Update state with the newly registered user and token
       state = state.copyWith(
         token: token,
         user: user,
@@ -124,13 +67,6 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   String _generateRememberToken() {
-    // Here you can use any method to generate a unique token,
-    // for example, generating a random string.
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
-
-// Example token generation (you can replace this with your actual implementation)
-  String generateToken() {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
@@ -149,8 +85,8 @@ class AuthController extends StateNotifier<AuthState> {
       final user = User.fromJson(response['user'] as Map<String, dynamic>);
       final token = response['token'] as String;
 
-      await _prefs.setString('token', token);
-      await _prefs.setString('user', jsonEncode(user.toJson()));
+      await _prefsService.setToken(token);
+      await _prefsService.setUser(user);
 
       state = state.copyWith(
         isLoading: false,
@@ -158,32 +94,17 @@ class AuthController extends StateNotifier<AuthState> {
         token: token,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
   }
 
   Future<void> logout() async {
     try {
-      state = state.copyWith(isLoading: true, error: null);
-
-      if (state.token != null) {
-        await _authApi.logout(token: state.token!);
-      }
-
-      await _prefs.remove('token');
-      await _prefs.remove('user');
-
+      await _prefsService.clearAll();
       state = AuthState();
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-      rethrow;
+      state = state.copyWith(error: e.toString());
     }
   }
 

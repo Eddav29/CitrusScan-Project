@@ -1,29 +1,28 @@
 import 'history.dart';
 
-class HistoryState {
-  final List<History>? histories;
-  final HistoryDetail? historyDetail;
-  final bool isLoading;
-  final String? error;
+sealed class HistoryState {
+  const HistoryState();
+}
 
-  HistoryState({
-    this.histories,
-    this.historyDetail,
-    this.isLoading = false,
-    this.error,
-  });
+class HistoryInitial extends HistoryState {
+  const HistoryInitial();
+}
 
-  HistoryState copyWith({
-    List<History>? histories,
-    HistoryDetail? historyDetail,
-    bool? isLoading,
-    String? error,
-  }) {
-    return HistoryState(
-      histories: histories ?? this.histories,
-      historyDetail: historyDetail ?? this.historyDetail,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-    );
-  }
+class HistoryLoading extends HistoryState {
+  const HistoryLoading();
+}
+
+class HistoryError extends HistoryState {
+  final String message;
+  const HistoryError(this.message);
+}
+
+class HistorySuccess extends HistoryState {
+  final List<History> histories;
+  const HistorySuccess(this.histories);
+}
+
+class HistoryDetailSuccess extends HistoryState {
+  final HistoryDetail detail;
+  const HistoryDetailSuccess(this.detail);
 }

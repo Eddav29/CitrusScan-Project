@@ -1,25 +1,23 @@
 import 'package:citrus_scan/data/model/prediction/prediction.dart';
 
-class PredictionState {
-  final Prediction? prediction;
-  final bool isLoading;
-  final String? error;
+sealed class PredictionState {
+  const PredictionState();
+}
 
-  PredictionState({
-    this.prediction,
-    this.isLoading = false,
-    this.error,
-  });
+class PredictionInitial extends PredictionState {
+  const PredictionInitial();
+}
 
-  PredictionState copyWith({
-    Prediction? prediction,
-    bool? isLoading,
-    String? error,
-  }) {
-    return PredictionState(
-      prediction: prediction ?? this.prediction,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
-  }
+class PredictionLoading extends PredictionState {
+  const PredictionLoading();
+}
+
+class PredictionSuccess extends PredictionState {
+  final Prediction prediction;
+  const PredictionSuccess(this.prediction);
+}
+
+class PredictionError extends PredictionState {
+  final String message;
+  const PredictionError(this.message);
 }

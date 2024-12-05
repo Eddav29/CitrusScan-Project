@@ -1,35 +1,30 @@
-import 'package:citrus_scan/provider/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/datasource/history_api.dart';
+import 'package:citrus_scan/data/model/history/history.dart';
+import 'package:citrus_scan/data/model/history/history_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HistoryController extends StateNotifier<HistoryState> {
   final HistoryApi _historyApi;
 
-  HistoryController(this._historyApi) : super(HistoryState());
+  HistoryController(this._historyApi) : super(const HistoryInitial());
 
-  Future<void> fetchUserHistory(int userId) async {
+  Future<void> fetchUserHistory(String userId) async {
     try {
-      state = state.copyWith(isLoading: true);
+      state = const HistoryLoading();
       final histories = await _historyApi.fetchUserHistory(userId);
-      state = state.copyWith(histories: histories, isLoading: false);
+      state = HistorySuccess(histories);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = HistoryError(e.toString());
     }
   }
 
-  Future<void> fetchUserHistoryDetail(int userId, int historyId) async {
+  Future<void> fetchHistoryDetail(String userId, String historyId) async {
     try {
-      state = state.copyWith(isLoading: true);
-      final historyDetail = await _historyApi.fetchUserHistoryDetail(userId, historyId);
-      state = state.copyWith(historyDetail: historyDetail, isLoading: false);
+      state = const HistoryLoading();
+      final detail = await _historyApi.fetchUserHistoryDetail(userId, historyId);
+      state = HistoryDetailSuccess(detail);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = HistoryError(e.toString());
     }
   }
 }
-
-final historyControllerProvider = StateNotifierProvider<HistoryController, HistoryState>((ref) {
-  final historyApi = ref.watch(historyApiProvider);
-  return HistoryController(historyApi);
-});
