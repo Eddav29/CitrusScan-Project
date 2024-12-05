@@ -23,9 +23,9 @@ class DiseaseDataApi {
     }
   }
 
-  Future<DiseaseDetail> getDiseaseDetails(String id) async {
+  Future<DiseaseDetail> getDiseaseDetails(String diseaseId) async {
     try {
-      final response = await _dio.get('/disease/$id');
+      final response = await _dio.get('/disease/$diseaseId');
       
       if (response.statusCode == 200) {
         final data = response.data['data'];

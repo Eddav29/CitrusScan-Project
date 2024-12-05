@@ -1,32 +1,63 @@
-// lib/controller/auth_controller.dart
 import 'dart:convert';
 import 'package:citrus_scan/data/model/user/auth_state.dart';
 import 'package:citrus_scan/data/model/user/user.dart';
-import 'package:citrus_scan/services/shared_preferences_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/data/datasource/auth_api.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final AuthApi _authApi;
-  final SharedPreferencesService _prefsService;
+  final SharedPreferences _prefs;
 
-  AuthController(this._authApi, this._prefsService) : super(AuthState()) {
+  AuthController(this._authApi, this._prefs) : super(AuthState()) {
     _initializeAuth();
   }
 
   Future<void> _initializeAuth() async {
-    final token = await _prefsService.getToken();
-    final user = await _prefsService.getUser();
+    try {
+      final userJson = _prefs.getString('user');
+      final token = _prefs.getString('token');
 
-    if (token != null && user != null) {
-      state = state.copyWith(
-        token: token,
-        user: user,
-      );
+      if (userJson != null && token != null) {
+        final user = User.fromJson(jsonDecode(userJson));
+        state = state.copyWith(
+          user: user,
+          token: token,
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
     }
   }
 
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+      
+      final response = await _authApi.login(
+        email: email,
+        password: password,
+      );
+
+      final user = User.fromJson(response['user']);
+      final token = response['access_token'];
+
+      await _prefs.setString('token', token);
+      await _prefs.setString('user', jsonEncode(user.toJson()));
+
+      state = state.copyWith(
+        user: user,
+        token: token,
+        isLoading: false,
+        error: null,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
 
   Future<void> register({
     required String email,
@@ -37,27 +68,22 @@ class AuthController extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final rememberToken = _generateRememberToken();
-      final emailVerifiedAt = DateTime.now().toIso8601String();
-
       final response = await _authApi.register(
         email: email,
         password: password,
         name: name,
         passwordConfirmation: passwordConfirmation,
-        emailVerifiedAt: emailVerifiedAt,
-        rememberToken: rememberToken,
       );
 
-      final user = User.fromJson(response);
-      final token = response['token'];
+      final user = User.fromJson(response['user']);
+      final token = response['access_token'];
 
-      await _prefsService.setToken(token);
-      await _prefsService.setUser(user);
+      await _prefs.setString('token', token);
+      await _prefs.setString('user', jsonEncode(user.toJson()));
 
       state = state.copyWith(
-        token: token,
         user: user,
+        token: token,
         isLoading: false,
         error: null,
       );
@@ -66,49 +92,31 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  String _generateRememberToken() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
-
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> logout() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
+      await _authApi.logout();
+      await _prefs.remove('token');
+      await _prefs.remove('user');
+      state = AuthState();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
 
-      final response = await _authApi.login(
-        email: email,
-        password: password,
-      );
-
-      final user = User.fromJson(response['user'] as Map<String, dynamic>);
-      final token = response['token'] as String;
-
-      await _prefsService.setToken(token);
-      await _prefsService.setUser(user);
-
+  Future<void> updateProfile({String? name, String? email}) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+      final response = await _authApi.updateProfile(name: name, email: email);
+      final updatedUser = User.fromJson(response);
+      await _prefs.setString('user', jsonEncode(updatedUser.toJson()));
       state = state.copyWith(
+        user: updatedUser,
         isLoading: false,
-        user: user,
-        token: token,
+        error: null,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      rethrow;
     }
   }
-
-  Future<void> logout() async {
-    try {
-      await _prefsService.clearAll();
-      state = AuthState();
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
-  }
-
-  bool get isAuthenticated => state.isAuthenticated;
-  String? get token => state.token;
-  User? get user => state.user;
 }

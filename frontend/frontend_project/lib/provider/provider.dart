@@ -15,7 +15,6 @@ import 'package:citrus_scan/data/model/history/history_state.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
 import 'package:citrus_scan/data/model/user/profile/profile_state.dart';
 import 'package:citrus_scan/data/model/user/auth_state.dart';
-import 'package:citrus_scan/services/shared_preferences_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,13 +96,8 @@ final historyControllerProvider = StateNotifierProvider<HistoryController, Histo
 });
 
 // Shared Preferences Provider
-final sharedPreferencesProvider = Provider<SharedPreferencesService>((ref) {
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Initialize this in main.dart using override');
 });
 
 // Initialize SharedPreferences
-Future<void> initializeProviders(ProviderContainer container) async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  final sharedPreferencesService = SharedPreferencesService(sharedPreferences);
-  container.read(sharedPreferencesProvider.notifier).state = sharedPreferencesService;
-}

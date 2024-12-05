@@ -26,6 +26,17 @@ class DiseaseData {
     );
   }
 
+  factory DiseaseData.fromDetail(DiseaseDetail detail, String diseaseId) {
+    return DiseaseData(
+      diseaseId: diseaseId,
+      name: detail.name,
+      description: detail.description,
+      treatment: detail.treatment,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'disease_id': diseaseId,

@@ -1,17 +1,18 @@
-import 'package:citrus_scan/data/datasource/disease_api.dart';
+import 'package:citrus_scan/data/datasource/disease_data_api.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
+import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DiseaseDataController extends StateNotifier<DiseaseDataState> {
-  final DiseaseApi _diseaseApi;
+  final DiseaseDataApi _diseaseDataApi;
 
-  DiseaseDataController(this._diseaseApi) : super(const DiseaseDataInitial());
+  DiseaseDataController(this._diseaseDataApi) : super(const DiseaseDataInitial());
 
   Future<void> fetchDiseases() async {
     try {
       state = const DiseaseDataLoading();
-      final diseases = await _diseaseApi.getDiseases();
+      final diseases = await _diseaseDataApi.getDiseases();
       state = DiseaseDataListSuccess(diseases);
     } catch (e) {
       state = DiseaseDataError(e.toString());
@@ -21,12 +22,14 @@ class DiseaseDataController extends StateNotifier<DiseaseDataState> {
   Future<void> fetchDiseaseDetails(String id) async {
     try {
       state = const DiseaseDataLoading();
-      final diseaseDetail = await _diseaseApi.getDiseaseDetails(id);
+      final diseaseDetail = await _diseaseDataApi.getDiseaseDetails(id);
       state = DiseaseDataDetailSuccess(DiseaseData(
-        id: diseaseDetail.id,
+        diseaseId: id,
         name: diseaseDetail.name,
         description: diseaseDetail.description,
         treatment: diseaseDetail.treatment,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ));
     } catch (e) {
       state = DiseaseDataError(e.toString());
