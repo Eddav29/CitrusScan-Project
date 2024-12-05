@@ -7,6 +7,7 @@ import 'data_jeruk_widget.dart';
 import '../../common/widgets/app_bar.dart';
 import '../history/scan_history_screen.dart';
 import '../search/search_disease.dart';
+import '../scan/scan_result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -143,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Riwayat Scan Terakhir",
+                        "Riwayat Deteksi Terakhir",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -172,8 +173,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  // Menampilkan riwayat scan
-                  RecentScanWidget(),
+                  // Menampilkan riwayat scan dengan _buildScanHistoryCard
+                  _buildScanHistoryCard(
+                    context,
+                    imagePath: 'assets/images/jeruk1.png',
+                    deteksi: 'Jeruk Manis',
+                    tanggal: '2 Okt 2024',
+                    saran: 'Cek lebih lanjut untuk kualitas jeruk.',
+                    isSelected: false,
+                  ),
                   SizedBox(height: 20),
                   // Data jeruk saya
                   Row(
@@ -215,4 +223,74 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: CustomNavigationBar(),
     );
   }
+}
+
+// Define the reusable scan history card widget
+Widget _buildScanHistoryCard(
+  BuildContext context, {
+  required String imagePath,
+  required String deteksi,
+  required String tanggal,
+  required String saran,
+  required bool isSelected,
+}) {
+  return GestureDetector(
+    onTap: () {
+      // Navigate to the ScanResultScreen and pass the imagePath
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScanResultScreen(imagePath: imagePath),
+        ),
+      );
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        color: Color(0xFF215C3C).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16),
+      child: Stack(
+        children: [
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  imagePath,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      deteksi,
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      saran,
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      tanggal,
+                      style: TextStyle(fontSize: 15, color: Colors.black54),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }
