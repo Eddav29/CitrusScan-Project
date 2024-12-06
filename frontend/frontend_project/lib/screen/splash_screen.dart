@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ],
                 ),
               ),
-              Spacer(),
+              SizedBox(height: 40), 
               // Tombol "Masuk" hanya muncul jika belum login
               if (!mounted || context.mounted)
                 SizedBox(
@@ -118,6 +118,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               SizedBox(height: 20),
+             Spacer(),
             ],
           ),
         ],
