@@ -97,7 +97,7 @@ class CitrusScanApp extends StatelessWidget {
             builder: (context, state) => EnterNewPasswordScreen() //
             ),
          GoRoute(
-            path: '/succes',
+            path: '/success',
             builder: (context, state) => SuccessChangePasswordScreen() //
             ),
       ],

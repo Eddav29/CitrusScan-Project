@@ -6,6 +6,7 @@ use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\PredictionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserHistoryController;
+use App\Http\Controllers\EmailVerificationController;
 
 Route::get('/test-connection', function () {
     return response()->json([
@@ -43,3 +44,6 @@ Route::get('/user-history/{user_id}', [UserHistoryController::class, 'showHistor
 
 //Route untuk melihat detail riwayat
 Route::get('/user-history/{user_id}/history/{user_history_id}', [UserHistoryController::class, 'showHistoryDetail']);
+
+//Route untuk mengirim email 
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationNotification']);
