@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:citrus_scan/data/model/prediction/prediction.dart';
 
+
 class PredictionApi {
   final Dio _dio;
 
@@ -10,7 +11,6 @@ class PredictionApi {
 
   Future<Prediction> predict(String imagePath) async {
     try {
-      // Get user data from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final userData = prefs.getString('user');
       
@@ -31,8 +31,11 @@ class PredictionApi {
       });
 
       final response = await _dio.post(
-        '/predict',
+        'http://10.0.2.2:8000/api/predict',
         data: formData,
+        options: Options(
+          receiveTimeout: Duration(seconds: 100), // Tingkatkan receiveTimeout
+        ),
       );
 
       if (response.statusCode == 200) {

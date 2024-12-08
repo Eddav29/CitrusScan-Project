@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
 import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/provider/provider.dart';
-
 class ScanResultScreen extends ConsumerStatefulWidget {
   final String imagePath;
 
-  const ScanResultScreen({Key? key, required this.imagePath}) : super(key: key);
+  const ScanResultScreen({super.key, required this.imagePath});
 
   @override
   _ScanResultScreenState createState() => _ScanResultScreenState();
@@ -54,15 +53,13 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                 decoration: BoxDecoration(
                   color: const Color.fromRGBO(234, 245, 239, 1),
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
                     topRight: Radius.circular(40),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, -3),
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, -5),
                     ),
                   ],
                 ),
@@ -105,33 +102,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                   onPressed: () {
                     ref.read(predictionControllerProvider.notifier).predict(widget.imagePath);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF215C3C),
-                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: Size(0, 56),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.center_focus_strong,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Deteksi Lagi',
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: const Text('Coba Lagi'),
                 ),
               ),
             ],
@@ -185,7 +156,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Tingkat Kepercayaan: ${(prediction.confidence * 100).toStringAsFixed(1)}%',
+            'Hasil Prediksi: ${(prediction.confidence * 100).toStringAsFixed(1)}%',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
