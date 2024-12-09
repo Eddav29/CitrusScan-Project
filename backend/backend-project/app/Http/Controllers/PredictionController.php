@@ -60,7 +60,6 @@ class PredictionController extends Controller
             'second_best_disease_confidence' => $secondBest['confidence'] ?? null,
         ]);
 
-                // In your PredictionController or any other controller where you're inserting into user_histories:
         $user = User::find($request->user_id);
 
         if (!$user) {
@@ -73,7 +72,7 @@ class PredictionController extends Controller
             'user_id' => $request->user_id,
             'prediction_id' => $predictionRecord->prediction_id,
             'image_path' => $imagePath,
-            'created_at' => now(),  // You can skip updated_at if you're not using it
+            'created_at' => now(),  
         ]);
 
 

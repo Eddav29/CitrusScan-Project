@@ -2,7 +2,7 @@ import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/data/model/user/profile/profile_state.dart';
 import 'package:citrus_scan/data/datasource/profile_api.dart';
-import 'package:citrus_scan/data/model/user/user.dart';
+
 
 class ProfileController extends StateNotifier<ProfileState> {
   final ProfileApi _profileApi;
