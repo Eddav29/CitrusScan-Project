@@ -1,7 +1,14 @@
 import 'package:citrus_scan/data/datasource/history_api.dart';
 import 'package:citrus_scan/data/model/history/history.dart';
 import 'package:citrus_scan/data/model/history/history_state.dart';
+import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final historyControllerProvider =
+    StateNotifierProvider<HistoryController, HistoryState>((ref) {
+  final historyApi = ref.watch(historyApiProvider);
+  return HistoryController(historyApi);
+});
 
 class HistoryController extends StateNotifier<HistoryState> {
   final HistoryApi _historyApi;
@@ -21,7 +28,8 @@ class HistoryController extends StateNotifier<HistoryState> {
   Future<void> fetchHistoryDetail(String userId, String historyId) async {
     try {
       state = const HistoryLoading();
-      final detail = await _historyApi.fetchUserHistoryDetail(userId, historyId);
+      final detail =
+          await _historyApi.fetchUserHistoryDetail(userId, historyId);
       state = HistoryDetailSuccess(detail);
     } catch (e) {
       state = HistoryError(e.toString());

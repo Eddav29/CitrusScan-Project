@@ -1,13 +1,13 @@
+import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../common/widgets/navigation_bar.dart';
 import 'tips_widget.dart';
 import '../scan/recent_scan_widget.dart';
-import 'data_jeruk_widget.dart';
 import '../../common/widgets/app_bar.dart';
 import '../history/scan_history_screen.dart';
 import '../search/search_disease.dart';
-import 'package:go_router/go_router.dart'; 
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,55 +17,59 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Color appBarColor = Colors.transparent;
 
-  // Data dummy untuk riwayat jeruk
-  final List<Map<String, String>> jerukData = [
-    {
-      "namaJeruk": "Jeruk Manis",
-      "tanggalScan": "2 Okt 2024",
-      "imagePath": 'assets/images/jeruk1.png',
-    },
-    {
-      "namaJeruk": "Jeruk Nipis",
-      "tanggalScan": "10 Okt 2024",
-      "imagePath": 'assets/images/jeruknipis.jpeg',
-    },
-    {
-      "namaJeruk": "Jeruk Bali",
-      "tanggalScan": "12 Okt 2024",
-      "imagePath": 'assets/images/jeruk1.png',
-    },
-    {
-      "namaJeruk": "Jeruk Keprok",
-      "tanggalScan": "15 Okt 2024",
-      "imagePath": 'assets/images/jeruknipis.jpeg',
-    },
-  ];
-
-  List<Widget> buildJerukRows() {
-    List<Widget> rows = [];
-    for (int i = 0; i < jerukData.length; i += 2) {
-      DataJerukWidget leftCard = DataJerukWidget(
-        namaJeruk: jerukData[i]["namaJeruk"]!,
-        tanggalScan: jerukData[i]["tanggalScan"]!,
-        imagePath: jerukData[i]["imagePath"]!,
-      );
-
-      DataJerukWidget rightCard = (i + 1 < jerukData.length)
-          ? DataJerukWidget(
-              namaJeruk: jerukData[i + 1]["namaJeruk"]!,
-              tanggalScan: jerukData[i + 1]["tanggalScan"]!,
-              imagePath: jerukData[i + 1]["imagePath"]!,
-            )
-          : DataJerukWidget(
-              namaJeruk: "",
-              tanggalScan: "",
-              imagePath: "",
-            );
-
-      rows.add(JerukRowWidget(leftCard: leftCard, rightCard: rightCard));
-      rows.add(SizedBox(height: 10));
-    }
-    return rows;
+  // Widget untuk setiap kartu penyakit
+  Widget _buildDiseaseCard(String name, String imagePath) {
+    return GestureDetector(
+      onTap: () {
+        // Navigasi ke halaman scan hasil dan kirimkan imagePath
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScanResultScreen(imagePath: imagePath),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 4,
+        margin: EdgeInsets.only(bottom: 16),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            Positioned(
+              bottom: 8,
+              left: 8,
+              right: 8,
+              child: Text(
+                name,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                      color: Color(0xFF215C3C).withOpacity(0.5),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -94,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            // Navigasi ke halaman pencarian penyakit
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -144,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Riwayat Scan Terakhir",
+                        "Riwayat Deteksi Terakhir",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -160,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: IconButton(
                           icon: Icon(Icons.arrow_forward, color: Colors.white),
                           onPressed: () {
-                            // Pindah ke halaman riwayat scan lengkap
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -173,41 +175,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  // Menampilkan riwayat scan
                   RecentScanWidget(),
                   SizedBox(height: 20),
-                  // Data jeruk saya
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Data Jeruk Saya",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Gilroy',
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xFF215C3C),
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_forward, color: Colors.white),
-                          onPressed: () {
-                            print("Lihat Selengkapnya Data Jeruk tapped");
-                            //go router ke halama history
-                            context.go('/history');
-                          },
-                        ),
-                      ),
-                    ],
+                  // Kategori Penyakit
+                  Text(
+                    "Kategori Penyakit",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Gilroy',
+                    ),
                   ),
                   SizedBox(height: 10),
-                  // Menampilkan semua data jeruk
-                  Column(
-                    children: buildJerukRows(),
+                  // Menampilkan kategori penyakit
+                  GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 2, // 2 kolom per baris
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 3 / 4, // Proporsi untuk mendekati desain
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildDiseaseCard(
+                          'Black Spot', 'assets/images/black-spot.jpg'),
+                      _buildDiseaseCard(
+                          'Melanose', 'assets/images/melanose.jpeg'),
+                      _buildDiseaseCard('Canker', 'assets/images/canker.jpg'),
+                      _buildDiseaseCard(
+                          'Greening', 'assets/images/greening.jpeg'),
+                    ],
                   ),
                 ],
               ),
