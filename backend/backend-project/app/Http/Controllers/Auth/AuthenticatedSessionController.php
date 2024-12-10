@@ -135,5 +135,33 @@ class AuthenticatedSessionController extends Controller
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
     
+    //update profile_picture
+    public function updateProfilePicture(Request $request)
+    {
+        // Ambil token dari header Authorization
+        $token = $request->bearerToken();
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        // Periksa apakah token valid
+        if (!$accessToken || !$accessToken->tokenable) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        // Ambil pengguna dari token
+        $user = $accessToken->tokenable;
+
+        // Validasi input
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Update profile picture
+        $profilePicture = $request->file('profile_picture');
+        $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
+        $user->profile_picture = $profilePicturePath;
+        $user->save();
+
+        return response()->json(['user' => $user], 200);
+    }
     
 }

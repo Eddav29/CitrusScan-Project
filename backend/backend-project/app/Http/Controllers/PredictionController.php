@@ -84,7 +84,7 @@ class PredictionController extends Controller
                 'disease' => $prediction,
                 'confidence' => $confidence,
                 'second_best' => $secondBest,
-                'image_path' => asset('storage/' . $imagePath),
+                'image_path' => $imagePath,
             ],
         ], 200);
     }

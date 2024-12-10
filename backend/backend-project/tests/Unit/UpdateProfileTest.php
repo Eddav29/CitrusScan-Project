@@ -60,7 +60,7 @@ class UpdateProfileTest extends TestCase
 
         $updateResponse->assertStatus(200);
         $this->assertDatabaseHas('users', [
-            'user_id' => $user->user_id, // Ubah 'id' menjadi 'user_id'
+            'user_id' => $user->user_id,
             'name' => 'Updated Name',
             'email' => 'updatedemail@example.com',
         ]);
@@ -95,4 +95,8 @@ class UpdateProfileTest extends TestCase
         $updatePasswordResponse->assertStatus(200);
         $this->assertTrue(Hash::check('newpassword', $user->fresh()->password));
     }
+
+
+    //test update profile_picture
+    
 }
