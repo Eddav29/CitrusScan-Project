@@ -8,25 +8,29 @@ class HistoryApi {
 
   Future<List<History>> fetchUserHistory(String userId) async {
     try {
-      final response = await _dio.get('/user/$userId/history');
-      
+      final response = await _dio.get('/user-history/$userId');
+
       if (response.data['data'] == null) {
         return [];
       }
 
       final data = response.data['data'] as List;
-      return data.map((history) => History.fromJson({
-        'prediction_id': history['prediction_id'],
-        'disease_name': history['disease_name'],
-        'created_at': history['created_at'],
-        'image_path': history['image_path'],
-      })).toList();
+      return data
+          .map((history) => History.fromJson({
+                'prediction_id': history['prediction_id'],
+                'disease_name': history['disease_name'],
+                'treatment': history['treatment'],
+                'created_at': history['created_at'],
+                'image_path': history['image_path'],
+              }))
+          .toList();
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<HistoryDetail> fetchUserHistoryDetail(String userId, String historyId) async {
+  Future<HistoryDetail> fetchUserHistoryDetail(
+      String userId, String historyId) async {
     try {
       final response = await _dio.get('/user/$userId/history/$historyId');
       final data = response.data['data'];
@@ -37,10 +41,12 @@ class HistoryApi {
         imagePath: data['image_path'],
         description: data['description'],
         treatment: data['treatment'],
-        steps: (data['steps'] as List).map((step) => TreatmentStep(
-          step: step['step'],
-          action: step['action'],
-        )).toList(),
+        steps: (data['steps'] as List)
+            .map((step) => TreatmentStep(
+                  step: step['step'],
+                  action: step['action'],
+                ))
+            .toList(),
         createdAt: data['created_at'],
       );
     } on DioException catch (e) {

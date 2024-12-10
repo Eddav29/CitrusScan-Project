@@ -69,28 +69,33 @@ final historyApiProvider = Provider<HistoryApi>((ref) {
 });
 
 // Controller Providers
-final predictionControllerProvider = StateNotifierProvider<PredictionController, PredictionState>((ref) {
+final predictionControllerProvider =
+    StateNotifierProvider<PredictionController, PredictionState>((ref) {
   final predictionApi = ref.watch(predictionApiProvider);
   return PredictionController(predictionApi);
 });
 
-final diseaseDataControllerProvider = StateNotifierProvider<DiseaseDataController, DiseaseDataState>((ref) {
+final diseaseDataControllerProvider =
+    StateNotifierProvider<DiseaseDataController, DiseaseDataState>((ref) {
   final diseaseApi = ref.watch(diseaseDataApiProvider);
   return DiseaseDataController(diseaseApi);
 });
 
-final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AuthState>((ref) {
   final authApi = ref.watch(authApiProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
   return AuthController(authApi, prefs);
 });
 
-final profileControllerProvider = StateNotifierProvider<ProfileController, ProfileState>((ref) {
+final profileControllerProvider =
+    StateNotifierProvider<ProfileController, ProfileState>((ref) {
   final profileApi = ref.watch(profileApiProvider);
   return ProfileController(profileApi);
 });
 
-final historyControllerProvider = StateNotifierProvider<HistoryController, HistoryState>((ref) {
+final historyControllerProvider =
+    StateNotifierProvider<HistoryController, HistoryState>((ref) {
   final historyApi = ref.watch(historyApiProvider);
   return HistoryController(historyApi);
 });

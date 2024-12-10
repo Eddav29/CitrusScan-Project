@@ -1,22 +1,31 @@
 class History {
   final int predictionId;
   final String diseaseName;
+  final String treatment;
   final DateTime createdAt;
   final String imagePath;
 
   History({
     required this.predictionId,
     required this.diseaseName,
+    required this.treatment,
     required this.createdAt,
     required this.imagePath,
   });
 
   factory History.fromJson(Map<String, dynamic> json) {
     return History(
-      predictionId: json['prediction_id'],
-      diseaseName: json['disease_name'],
-      createdAt: DateTime.parse(json['created_at']),
-      imagePath: json['image_path'],
+      predictionId: json['prediction_id'] is String
+          ? int.tryParse(json['prediction_id']) ?? 0
+          : (json['prediction_id'] as int? ?? 0),
+      diseaseName: json['disease_name'] ??
+          'Unknown Disease', 
+      treatment: json['treatment'] ??
+          'No Treatment', 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      imagePath: json['image_path'] ?? '',
     );
   }
 
@@ -24,6 +33,7 @@ class History {
     return {
       'prediction_id': predictionId,
       'disease_name': diseaseName,
+      'treatment': treatment,
       'created_at': createdAt.toIso8601String(),
       'image_path': imagePath,
     };
@@ -51,7 +61,8 @@ class HistoryDetail {
 
   factory HistoryDetail.fromJson(Map<String, dynamic> json) {
     var stepsFromJson = json['steps'] as List;
-    List<TreatmentStep> stepsList = stepsFromJson.map((step) => TreatmentStep.fromJson(step)).toList();
+    List<TreatmentStep> stepsList =
+        stepsFromJson.map((step) => TreatmentStep.fromJson(step)).toList();
 
     return HistoryDetail(
       diseaseName: json['disease_name'],

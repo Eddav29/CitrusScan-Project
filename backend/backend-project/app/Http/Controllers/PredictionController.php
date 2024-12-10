@@ -24,7 +24,7 @@ class PredictionController extends Controller
         // Kirim gambar ke API model
         $response = Http::attach(
             'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
-        )->post('http://192.168.100.6:5000/predict');
+        )->post('http://127.0.0.1:5000/predict');
 
         if ($response->failed()) {
             return response()->json([
