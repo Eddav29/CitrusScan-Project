@@ -23,40 +23,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-Future<void> _handleLogin() async {
-  if (!_formKey.currentState!.validate()) return;
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
 
-  try {
-    // Attempt login through the controller
-    await ref.read(authControllerProvider.notifier).login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
+    try {
+      await ref.read(authControllerProvider.notifier).login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
 
-    // If login is successful, navigate to home
-    if (mounted) {
-      context.go('/home');
-    }
-  } catch (e) {
-    // If an error occurs (e.g., incorrect email/password), show an error message
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  } finally {
-    // Hide the loading indicator
-    if (mounted) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        context.go('/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-}
-
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -72,8 +67,8 @@ Future<void> _handleLogin() async {
     if (value == null || value.isEmpty) {
       return 'Password tidak boleh kosong';
     }
-    if (value.length < 8) {
-      return 'Password minimal 8 karakter';
+    if (value.length < 6) {
+      return 'Password minimal 6 karakter';
     }
     return null;
   }

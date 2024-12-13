@@ -92,7 +92,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: Column(
                           children: [
                             Text(
-                              user?.name ?? 'Tamu',
+                              user?.name ?? 'Guest User',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  user?.email ?? 'Tidak ada email',
+                                  user?.email ?? 'No email',
                                   style: TextStyle(color: Colors.black54),
                                 ),
                                 SizedBox(width: 5),
@@ -113,44 +113,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 20),
-                        // Garis pemisah antara Profil dan Pengaturan
-                        Divider(
-                          color: Colors.grey[300],
-                          thickness: 1,
-                        ),
-                        SizedBox(height: 10),
-                        // Header Pengaturan
-                        Text(
-                          'Pengaturan',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        // Bagian Pengaturan Profil
-                        _buildSettingsSection(
-                          icon: Icons.edit,
-                          title: 'Edit Profil',
-                          subtitle: 'Perbarui dan ubah profil Anda',
-                          identifier: 'edit_profile',
-                        ),
-                        SizedBox(height: 10),
-                        // Bagian Privasi
-                        _buildSettingsSection(
-                          icon: Icons.lock,
-                          title: 'Privasi',
-                          subtitle: 'Ganti kata sandi Anda',
-                          identifier: 'change_password',
-                        ),
-                        SizedBox(height: 10),
-                        // Bagian Logout
-                        _buildSettingsSection(
-                          icon: Icons.logout,
-                          title: 'Keluar',
-                          subtitle: 'Keluar dari akun Anda',
-                          identifier: 'logout',
+                      Divider(),
+                      ListTile(
+                        leading: Icon(Icons.person_outline, color: Color(0xFF215C3C)),
+                        title: Text('Edit Profile'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle edit profile
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.notifications_outlined, color: Color(0xFF215C3C)),
+                        title: Text('Notifications'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle notifications
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.security_outlined, color: Color(0xFF215C3C)),
+                        title: Text('Security'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle security
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.help_outline, color: Color(0xFF215C3C)),
+                        title: Text('Help Center'),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Handle help center
+                        },
                       ),
                     ],
                   ),
@@ -159,78 +153,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-
-Widget _buildSettingsSection({
-  required IconData icon,
-  required String title,
-  required String subtitle,
-  required String identifier,
-}) {
-  final isSelected = selectedSetting == identifier;
-  final isLogout = identifier == 'logout';
-
-  return GestureDetector(
-    onTap: () {
-      setState(() {
-        selectedSetting = identifier;
-        if (identifier == 'logout') {
-          // Tambahkan jeda sebelum logout
-          Future.delayed(Duration(milliseconds: 300), () {
-            _handleLogout(); // Panggil fungsi logout
-          });
-        } else if (identifier == 'edit_profile') {
-          context.go('/profileEdit'); // Ganti dengan rute ke halaman edit profil
-        } else if (identifier == 'change_password') {
-          context.go('/changePassword'); // Ganti dengan rute ke halaman ganti kata sandi
-        }
-      });
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: isSelected ? (isLogout ? Colors.red : Color(0xFF215C3C)) : Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: isSelected ? Colors.black26 : Colors.black12,
-            blurRadius: isSelected ? 8 : 4,
-            offset: Offset(0, isSelected ? 6 : 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: isSelected ? Colors.white : (isLogout ? Colors.red[100] : Colors.grey[200]),
-          child: Icon(
-            icon,
-            color: isLogout ? Colors.red : (isSelected ? Colors.white : Color(0xFF215C3C)),
-          ),
-        ),
-       title: Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Gilroy',
-            color: isSelected ? (isLogout ? Colors.white : Colors.white) : (isLogout ? Colors.red : Colors.black87),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontFamily: 'Gilroy',
-            fontSize: 15.0,
-            color: isSelected ? (isLogout ? Colors.black54 : Colors.white70) : (isLogout ? Colors.red[300] : Colors.black54),
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: isSelected ? (isLogout ? Colors.white : Colors.white) : Colors.grey[600],
-          ),
-        ),
       ),
     );
   }

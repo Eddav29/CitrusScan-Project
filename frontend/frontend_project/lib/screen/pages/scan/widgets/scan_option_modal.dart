@@ -4,7 +4,8 @@ import 'package:image_picker/image_picker.dart';
 class ScanOptionsModal extends StatelessWidget {
   final Function(ImageSource) onImageSourceSelected;
 
-  const ScanOptionsModal({super.key, required this.onImageSourceSelected});
+  const ScanOptionsModal({Key? key, required this.onImageSourceSelected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

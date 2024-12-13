@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/controller/auth_controller.dart';
 import 'package:citrus_scan/provider/provider.dart';
-
 class RegisterScreen extends ConsumerStatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -15,7 +14,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
-
+  
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -42,28 +41,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     try {
       await ref.read(authControllerProvider.notifier).register(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            name: _nameController.text.trim(),
-            passwordConfirmation: _confirmPasswordController.text,
-          );
-
+        email: _emailController.text.trim() ,
+        password: _passwordController.text,
+        name: _nameController.text.trim(),
+        passwordConfirmation: _confirmPasswordController.text,
+      );
+      
       if (mounted) {
+        // Tampilkan snackbar sukses
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Registrasi berhasil! Silakan login.'),
             backgroundColor: Colors.green,
           ),
         );
+        // Navigasi ke halaman login
         context.go('/login');
       }
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
       });
+      // Tampilkan snackbar error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_errorMessage ?? 'Pendaftaran akun gagal.'),
+          content: Text(_errorMessage ?? 'Terjadi kesalahan'),
           backgroundColor: Colors.red,
         ),
       );
@@ -154,8 +156,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.person, color: Color(0xFF215C3C)),
+                        prefixIcon: Icon(Icons.person, color: Color(0xFF215C3C)),
                         hintText: "Nama Pengguna",
                         fillColor: Color(0xFF215C3C).withOpacity(0.1),
                         filled: true,
@@ -201,7 +202,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           return 'Password tidak boleh kosong';
                         }
                         if (value.length < 6) {
-                          return 'Password minimal ';
+                          return 'Password minimal 6 karakter';
                         }
                         return null;
                       },
@@ -209,9 +210,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         prefixIcon: Icon(Icons.lock, color: Color(0xFF215C3C)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
                             color: Color(0xFF215C3C),
                           ),
                           onPressed: () {
@@ -248,15 +247,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         prefixIcon: Icon(Icons.lock, color: Color(0xFF215C3C)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                             color: Color(0xFF215C3C),
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
+                              _obscureConfirmPassword = !_obscureConfirmPassword;
                             });
                           },
                         ),

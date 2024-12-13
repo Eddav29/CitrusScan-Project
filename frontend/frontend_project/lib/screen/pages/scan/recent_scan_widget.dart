@@ -16,10 +16,7 @@ class RecentScanWidget extends StatelessWidget {
               // Arahkan ke halaman ScanResultScreen saat kartu diklik
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => ScanResultScreen(
-                          imagePath: '',
-                        )),
+                MaterialPageRoute(builder: (context) => ScanResultScreen(imagePath: '',)),
               );
             },
             child: Container(
@@ -29,9 +26,6 @@ class RecentScanWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12), // Sudut melengkung
               ),
               padding: EdgeInsets.all(16),
-              margin: EdgeInsets.only(
-                  bottom:
-                      16), // Menambahkan margin bawah untuk jarak antar item
               child: Row(
                 children: [
                   // Gambar hasil scan
@@ -39,10 +33,8 @@ class RecentScanWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
                       'assets/images/jeruknipis.jpeg',
-                      width:
-                          80, // Sesuaikan dengan ukuran gambar di ScanHistoryScreen
-                      height:
-                          80, // Sesuaikan dengan ukuran gambar di ScanHistoryScreen
+                      width: 100, // Lebar gambar
+                      height: 100, // Tinggi gambar
                       fit: BoxFit.cover, // Menjaga proporsi gambar
                     ),
                   ),
@@ -60,22 +52,31 @@ class RecentScanWidget extends StatelessWidget {
                             color: Colors.black, // Warna font hitam
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // Keterangan tambahan
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors
-                                .black54, // Warna hitam dengan transparansi
-                          ),
-                        ),
-                        SizedBox(height: 4),
+                        SizedBox(height: 8),
                         Text(
                           '10 Okt 2024', // Tanggal scan
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors
                                 .black54, // Warna font hitam dengan transparansi
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Kondisi Baik', // Kondisi produk
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black, // Warna font hitam
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // Keterangan tambahan
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors
+                                .black54, // Warna hitam dengan transparansi
                           ),
                         ),
                       ],

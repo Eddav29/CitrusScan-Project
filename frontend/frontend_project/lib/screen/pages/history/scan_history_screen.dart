@@ -165,7 +165,7 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                historyItem.imagePath, // Use image from network
+                historyItem.imagePath,
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
@@ -184,7 +184,7 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    historyItem.treatment,
+                    historyItem.imagePath,
                     style: TextStyle(fontSize: 14, color: Colors.black54),
                     overflow: TextOverflow.ellipsis, // Prevent overflow
                   ),

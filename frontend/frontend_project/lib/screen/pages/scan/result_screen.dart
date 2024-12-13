@@ -7,7 +7,7 @@ class ResultScreen extends StatefulWidget {
   final String imagePath;
 
   // Constructor menerima path gambar
-  const ResultScreen({super.key, required this.imagePath});
+  ResultScreen({required this.imagePath});
 
   @override
   _ResultScreenState createState() => _ResultScreenState();
@@ -37,7 +37,7 @@ class _ResultScreenState extends State<ResultScreen> {
       // Simulasikan waktu analisis hasil
       Future.delayed(Duration(seconds: 3), () {
         // Setelah analisis selesai, arahkan ke halaman hasil deteksi
-      context.go('/resultDetection', extra: widget.imagePath);
+        context.go('/resultDetection', extra: widget.imagePath);
       });
     });
   }

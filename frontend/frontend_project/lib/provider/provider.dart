@@ -19,19 +19,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
-// Base URL provider based on kIsWeb
-final baseUrlProvider = Provider<String>((ref) {
-  return kIsWeb ? 'https://backend.citrus-scan.my.id/api' : '';
-});
-
-// Dio Provider
+// API Providers
 final dioProvider = Provider<Dio>((ref) {
-  final baseUrl = ref.watch(baseUrlProvider);
-
   final dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
+    baseUrl: Platform.isAndroid ? 'http://backend.citrus-scan.my.id/api' : '',
     contentType: 'application/json',
     headers: {
       'Accept': 'application/json',

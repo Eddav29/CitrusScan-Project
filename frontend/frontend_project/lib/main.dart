@@ -92,12 +92,12 @@ class CitrusScanApp extends StatelessWidget {
             path: '/pageOTP',
             builder: (context, state) => VerificationCodeScreen() //
             ),
-         GoRoute(
+        GoRoute(
             path: '/newPassword',
             builder: (context, state) => EnterNewPasswordScreen() //
             ),
-         GoRoute(
-            path: '/success',
+        GoRoute(
+            path: '/succes',
             builder: (context, state) => SuccessChangePasswordScreen() //
             ),
       ],
