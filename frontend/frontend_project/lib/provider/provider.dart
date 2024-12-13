@@ -23,9 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // API Providers
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: Platform.isAndroid
-        ? 'http://10.0.2.2:8000/api'
-        : 'http://127.0.0.1:8000/api',
+    baseUrl: 'http://backend.citrus-scan.my.id/api',
     contentType: 'application/json',
     headers: {
       'Accept': 'application/json',
