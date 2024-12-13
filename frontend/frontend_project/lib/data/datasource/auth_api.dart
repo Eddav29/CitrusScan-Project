@@ -29,31 +29,36 @@ class AuthApi {
       throw _handleError(e);
     }
   }
+  
+Future<Map<String, dynamic>> register({
+  required String email,
+  required String password,
+  required String name,
+  required String passwordConfirmation,
+  String? emailVerifiedAt,
+  String? rememberToken,
+}) async {
+  try {
+    final response = await _dio.post(
+      '/register',
+      data: {
+        'email': email,
+        'password': password,
+        'name': name,
+        'password_confirmation': passwordConfirmation,
+      },
+    );
 
-  Future<Map<String, dynamic>> register({
-    required String email,
-    required String password,
-    required String name,
-    required String passwordConfirmation,
-    String? emailVerifiedAt,
-    String? rememberToken,
-  }) async {
-    try {
-      final response = await _dio.post(
-        '/register',
-        data: {
-          'email': email,
-          'password': password,
-          'name': name,
-          'password_confirmation': passwordConfirmation,
-        },
-      );
-
+    if (response.statusCode == 201 && response.data['user'] != null) {
       return response.data;
-    } on DioException catch (e) {
-      throw _handleError(e);
+    } else {
+      throw Exception('Gagal menyimpan akun ke database');
     }
+  } on DioException catch (e) {
+    throw _handleError(e);
   }
+}
+
 
   Future<void> logout() async {
     try {

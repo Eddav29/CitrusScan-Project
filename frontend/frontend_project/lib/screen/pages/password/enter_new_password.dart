@@ -21,48 +21,47 @@ class _EnterNewPasswordScreenState extends State<EnterNewPasswordScreen> {
     super.dispose();
   }
 
-Future<void> _handleResetPassword() async {
-  if (!_formKey.currentState!.validate()) return;
+  Future<void> _handleResetPassword() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
 
-  try {
-    // Simulate password reset process
-    await Future.delayed(Duration(seconds: 2));
+    try {
+      // Simulate password reset process
+      await Future.delayed(Duration(seconds: 2));
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Password berhasil diubah!"),
-          backgroundColor: Color(0xFF215C3C),
-        ),
-      );
-      // Navigate to success page
-      context.go('/succes'); // Ganti halaman ke '/success'
-    }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  } finally {
-    if (mounted) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Password berhasil diubah!"),
+            backgroundColor: Color(0xFF215C3C),
+          ),
+        );
+        // Navigate to success page
+        context.go('/succes'); // Ganti halaman ke '/success'
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-}
-
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password tidak boleh kosong';
     }
-    if (value.length < 6) {
-      return 'Password minimal 6 karakter';
+    if (value.length < 8) {
+      return 'Password minimal 8 karakter';
     }
     return null;
   }
@@ -96,7 +95,6 @@ Future<void> _handleResetPassword() async {
                     ),
                   ),
                 ),
-                
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -150,7 +148,9 @@ Future<void> _handleResetPassword() async {
                         prefixIcon: Icon(Icons.lock, color: Color(0xFF215C3C)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                            _obscureNewPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: Color(0xFF215C3C),
                           ),
                           onPressed: () {
@@ -187,12 +187,15 @@ Future<void> _handleResetPassword() async {
                         prefixIcon: Icon(Icons.lock, color: Color(0xFF215C3C)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                            _obscureConfirmPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: Color(0xFF215C3C),
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),

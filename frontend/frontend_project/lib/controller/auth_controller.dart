@@ -30,67 +30,80 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      state = state.copyWith(isLoading: true, error: null);
+Future<void> login({
+  required String email,
+  required String password,
+}) async {
+  try {
+    state = state.copyWith(isLoading: true, error: null);
 
-      final response = await _authApi.login(
-        email: email,
-        password: password,
-      );
+    final response = await _authApi.login(
+      email: email,
+      password: password,
+    );
 
-      final user = User.fromJson(response['user']);
-      final token = response['access_token'];
-
-      await _prefs.setString('token', token);
-      await _prefs.setString('user', jsonEncode(user.toJson()));
-
-      state = state.copyWith(
-        user: user,
-        token: token,
-        isLoading: false,
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    if (response['status'] == 'error') {
+      throw Exception('Email atau password salah.');
     }
+
+    final user = User.fromJson(response['user']);
+    final token = response['access_token'];
+
+    await _prefs.setString('token', token);
+    await _prefs.setString('user', jsonEncode(user.toJson()));
+
+    state = state.copyWith(
+      user: user,
+      token: token,
+      isLoading: false,
+      error: null,
+    );
+  } catch (e) {
+    state = state.copyWith(isLoading: false, error: e.toString());
+    throw e; // Re-throw the error to handle it in the UI
   }
+}
 
-  Future<void> register({
-    required String email,
-    required String password,
-    required String name,
-    required String passwordConfirmation,
-  }) async {
-    try {
-      state = state.copyWith(isLoading: true, error: null);
 
-      final response = await _authApi.register(
-        email: email,
-        password: password,
-        name: name,
-        passwordConfirmation: passwordConfirmation,
-      );
+Future<void> register({
+  required String email,
+  required String password,
+  required String name,
+  required String passwordConfirmation,
+}) async {
+  try {
+    state = state.copyWith(isLoading: true, error: null);
 
-      final user = User.fromJson(response['user']);
-      final token = response['access_token'];
+    final response = await _authApi.register(
+      email: email,
+      password: password,
+      name: name,
+      passwordConfirmation: passwordConfirmation,
+    );
 
-      await _prefs.setString('token', token);
-      await _prefs.setString('user', jsonEncode(user.toJson()));
-
-      state = state.copyWith(
-        user: user,
-        token: token,
-        isLoading: false,
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    // Pastikan response memiliki data user
+    if (response['user'] == null || response['access_token'] == null) {
+      throw Exception('Gagal menyimpan akun ke database');
     }
+
+    final user = User.fromJson(response['user']);
+    final token = response['access_token'];
+
+    await _prefs.setString('token', token);
+    await _prefs.setString('user', jsonEncode(user.toJson()));
+
+    state = state.copyWith(
+      user: user,
+      token: token,
+      isLoading: false,
+      error: null,
+    );
+  } catch (e) {
+    state = state.copyWith(isLoading: false, error: e.toString());
+    throw Exception(e); // Lempar error agar dapat ditangkap di UI
   }
+}
+
 
   Future<void> logout() async {
     try {
