@@ -12,41 +12,41 @@ class DiseaseSeeder extends Seeder
     {
         $diseases = [
             [
-                'name' => 'Citrus Black Spot',
-                'description' => 'Disebabkan oleh jamur *Phyllosticta citricarpa*, ditandai dengan bintik hitam pada buah dan daun.',
+                'name' => 'Black Spot',
                 'treatment' => 'Gunakan fungisida berbasis tembaga setiap 2 minggu selama musim hujan.',
+                'disease_image' => 'uploads/black-spot.jpg',
             ],
             [
-                'name' => 'Citrus Greening (HLB)',
-                'description' => 'Disebabkan oleh bakteri *Candidatus Liberibacter*, yang disebarkan oleh kutu loncat.',
+                'name' => 'Greening',
                 'treatment' => 'Kontrol kutu loncat dengan insektisida, dan cabut tanaman yang terinfeksi parah.',
+                'disease_image' => 'uploads/greening.jpg',
             ],
             [
-                'name' => 'Citrus Canker',
-                'description' => 'Infeksi bakteri *Xanthomonas citri* yang menyebabkan lesi dan luka pada daun, batang, dan buah.',
+                'name' => 'Cancer',
                 'treatment' => 'Aplikasikan bakterisida berbasis tembaga dan pangkas bagian yang terinfeksi.',
+                'disease_image' => 'uploads/cancer.jpg',
             ],
             [
-                'name' => 'Citrus Melanose',
-                'description' => 'Penyakit jamur yang disebabkan oleh *Diaporthe citri*, menyebabkan bintik coklat kecil pada daun dan buah.',
+                'name' => 'Melanose',
                 'treatment' => 'Lakukan pemangkasan cabang mati dan aplikasikan fungisida sebelum pembentukan buah.',
+                'disease_image' => 'uploads/melanose.jpg',
             ],
             [
-                'name' => 'Healthy Citrus',
-                'description' => 'Tanaman citrus yang bebas dari penyakit.',
+                'name' => 'Healthy',
                 'treatment' => 'Perawatan pencegahan dengan fungisida dan insektisida secara teratur.',
+                'disease_image' => 'uploads/healthy.jpg',
             ],
         ];
-
+    
         foreach ($diseases as $disease) {
             DB::table('diseases')->insert([
                 'disease_id' => Str::uuid(),
                 'name' => $disease['name'],
-                'description' => $disease['description'],
                 'treatment' => $disease['treatment'],
+                'disease_image' => $disease['disease_image'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
-    }
+    }  
 }

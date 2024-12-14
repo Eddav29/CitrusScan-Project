@@ -20,18 +20,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// API Providers
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: Platform.isAndroid ? 'http://backend.citrus-scan.my.id/api' : '',
+    // baseUrl for your API
+    // baseUrl: Platform.isAndroid ? 'http://backend.citrus-scan.my.id/api' : '',
+    baseUrl: Platform.isAndroid
+        ? 'http://10.0.2.2:8000/api'
+        : 'http://127.0.0.1:8000/api',
     contentType: 'application/json',
     headers: {
       'Accept': 'application/json',
     },
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
+    connectTimeout: const Duration(seconds: 60), // Time to connect
+    receiveTimeout: const Duration(seconds: 60), // Time to receive data
   ));
 
+  // Optionally add logging for debugging
   dio.interceptors.add(LogInterceptor(
     requestBody: true,
     responseBody: true,

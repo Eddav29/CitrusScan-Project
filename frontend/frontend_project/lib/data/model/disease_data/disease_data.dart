@@ -1,39 +1,39 @@
 class DiseaseData {
   final String diseaseId;
   final String name;
-  final String? description;
   final String? treatment;
+  final String diseaseImage;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<TreatmentStep> steps;
 
   DiseaseData({
     required this.diseaseId,
     required this.name,
-    this.description,
     this.treatment,
+    required this.diseaseImage,
     required this.createdAt,
     required this.updatedAt,
+    required this.steps,
   });
 
   factory DiseaseData.fromJson(Map<String, dynamic> json) {
-    return DiseaseData(
-      diseaseId: json['disease_id'],
-      name: json['name'],
-      description: json['description'],
-      treatment: json['treatment'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-    );
-  }
+    var treatmentSteps = <TreatmentStep>[];
+    if (json['steps'] != null) {
+      treatmentSteps = List<TreatmentStep>.from(
+          json['steps'].map((step) => TreatmentStep.fromJson(step)));
+    }
 
-  factory DiseaseData.fromDetail(DiseaseDetail detail, String diseaseId) {
     return DiseaseData(
-      diseaseId: diseaseId,
-      name: detail.name,
-      description: detail.description,
-      treatment: detail.treatment,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      diseaseId: json['disease_id'] ?? '',
+      name: json['name'] ?? 'Unknown Disease',
+      treatment: json['treatment'],
+      diseaseImage: json['disease_image'] ?? '',
+      createdAt: DateTime.parse(
+          json['created_at'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(
+          json['updated_at'] ?? DateTime.now().toIso8601String()),
+      steps: treatmentSteps,
     );
   }
 
@@ -41,48 +41,43 @@ class DiseaseData {
     return {
       'disease_id': diseaseId,
       'name': name,
-      'description': description,
       'treatment': treatment,
+      'disease_image': diseaseImage,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'steps': steps.map((step) => step.toJson()).toList(),
     };
   }
 }
 
-class DiseaseDetail {
-  final String name;
-  final String description;
-  final String treatment;
-  final List<TreatmentStep> steps;
-
-  DiseaseDetail({
-    required this.name,
-    required this.description,
-    required this.treatment,
-    required this.steps,
-  });
-}
-
 class TreatmentStep {
-  final String step;
-  final String action;
+  final String description;
+  final String symptoms;
+  final String solutions;
+  final String prevention;
 
   TreatmentStep({
-    required this.step,
-    required this.action,
+    required this.description,
+    required this.symptoms,
+    required this.solutions,
+    required this.prevention,
   });
 
   factory TreatmentStep.fromJson(Map<String, dynamic> json) {
     return TreatmentStep(
-      step: json['step'],
-      action: json['action'],
+      description: json['description'] ?? '',
+      symptoms: json['symptoms'] ?? '',
+      solutions: json['solutions'] ?? '',
+      prevention: json['prevention'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'step': step,
-      'action': action,
+      'description': description,
+      'symptoms': symptoms,
+      'solutions': solutions,
+      'prevention': prevention,
     };
   }
 }

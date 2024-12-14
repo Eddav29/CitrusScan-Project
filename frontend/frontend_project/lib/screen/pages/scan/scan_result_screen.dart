@@ -103,7 +103,9 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(predictionControllerProvider.notifier).predict(widget.imagePath);
+                    ref
+                        .read(predictionControllerProvider.notifier)
+                        .predict(widget.imagePath);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF215C3C),
@@ -144,67 +146,69 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
   Widget _buildContent(PredictionState state) {
     return switch (state) {
       PredictionInitial() => const Center(
-        child: Text('Siap untuk memindai gambar'),
-      ),
+          child: Text('Siap untuk memindai gambar'),
+        ),
       PredictionLoading() => const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Menganalisis gambar...'),
-          ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Menganalisis gambar...'),
+            ],
+          ),
         ),
-      ),
       PredictionError(message: var message) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red),
-            SizedBox(height: 16),
-            Text(message),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(predictionControllerProvider.notifier).predict(widget.imagePath);
-              },
-              child: const Text('Coba Lagi'),
-            ),
-          ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 48, color: Colors.red),
+              SizedBox(height: 16),
+              Text(message),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  ref
+                      .read(predictionControllerProvider.notifier)
+                      .predict(widget.imagePath);
+                },
+                child: const Text('Coba Lagi'),
+              ),
+            ],
+          ),
         ),
-      ),
       PredictionSuccess(prediction: var prediction) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            prediction.disease,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              prediction.disease,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tingkat Kepercayaan: ${(prediction.confidence * 100).toStringAsFixed(1)}%',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-          if (prediction.secondBest != null) ...[
             const SizedBox(height: 8),
             Text(
-              'Kemungkinan lain: ${prediction.secondBest!['name']} (${(prediction.secondBest!['confidence'] * 100).toStringAsFixed(1)}%)',
+              'Tingkat Kepercayaan: ${(prediction.confidence * 100).toStringAsFixed(1)}%',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 color: Colors.grey[600],
               ),
             ),
+            if (prediction.secondBest != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Kemungkinan lain: ${prediction.secondBest!['name']} (${(prediction.secondBest!['confidence'] * 100).toStringAsFixed(1)}%)',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+            _buildDiseaseDetails(prediction.diseaseId),
           ],
-          const SizedBox(height: 24),
-          _buildDiseaseDetails(prediction.diseaseId),
-        ],
-      ),
+        ),
     };
   }
 
@@ -212,32 +216,33 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
     return Consumer(
       builder: (context, ref, child) {
         final state = ref.watch(diseaseDataControllerProvider);
-        
+
         return switch (state) {
           DiseaseDataInitial() => const SizedBox(),
-          DiseaseDataLoading() => const Center(child: CircularProgressIndicator()),
-          DiseaseDataError(message: var message) => Center(child: Text('Error: $message')),
+          DiseaseDataLoading() =>
+            const Center(child: CircularProgressIndicator()),
+          DiseaseDataError(message: var message) =>
+            Center(child: Text('Error: $message')),
           DiseaseDataDetailSuccess(diseaseDetail: var disease) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                disease.name,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Description:',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(disease.description ?? 'No description available'),
-              const SizedBox(height: 16),
-              Text(
-                'Treatment:',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(disease.treatment ?? 'No treatment information available'),
-            ],
-          ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  disease.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Description:',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Treatment:',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(disease.treatment ?? 'No treatment information available'),
+              ],
+            ),
           _ => const SizedBox(),
         };
       },

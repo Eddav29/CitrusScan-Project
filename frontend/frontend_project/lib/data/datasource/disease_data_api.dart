@@ -6,44 +6,36 @@ class DiseaseDataApi {
 
   DiseaseDataApi(this._dio);
 
+  // Fungsi untuk mengambil daftar penyakit
   Future<List<DiseaseData>> getDiseases() async {
     try {
-      final response = await _dio.get('/disease');
-      
+      final response =
+          await _dio.get('/diseases'); // Panggil endpoint /diseases
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
+        final List<dynamic> data = response.data;
+        // Mengembalikan list of DiseaseData dengan memetakan data JSON ke dalam objek DiseaseData
         return data.map((json) => DiseaseData.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load diseases');
       }
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to connect to server');
     } catch (e) {
-      throw Exception('An unexpected error occurred');
+      throw Exception('Error: $e');
     }
   }
 
-  Future<DiseaseDetail> getDiseaseDetails(String diseaseId) async {
+// Fungsi untuk mengambil detail penyakit beserta langkah perawatannya
+  Future<DiseaseData> getDiseaseDetails(String diseaseId) async {
     try {
-      final response = await _dio.get('/disease/$diseaseId');
-      
+      final response = await _dio.get('/diseases/$diseaseId');
       if (response.statusCode == 200) {
-        final data = response.data['data'];
-        return DiseaseDetail(
-          name: data['name'],
-          description: data['description'],
-          treatment: data['treatment'],
-          steps: (data['steps'] as List)
-              .map((step) => TreatmentStep.fromJson(step))
-              .toList(),
-        );
+        final data = response.data;
+
+        return DiseaseData.fromJson(data);
       } else {
         throw Exception('Failed to load disease details');
       }
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to connect to server');
     } catch (e) {
-      throw Exception('An unexpected error occurred');
+      throw Exception('Error: $e');
     }
   }
 }
