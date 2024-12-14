@@ -36,6 +36,11 @@ class DiseaseSeeder extends Seeder
                 'description' => 'Tanaman citrus yang bebas dari penyakit.',
                 'treatment' => 'Perawatan pencegahan dengan fungisida dan insektisida secara teratur.',
             ],
+            [
+                'name' => 'Non Citrus Leaf',
+                'description' => 'Tanaman yang bukan tanaman jeruk.',
+                'treatment' => 'Tidak ada rawatan khusus.',
+            ],
         ];
 
         foreach ($diseases as $disease) {
