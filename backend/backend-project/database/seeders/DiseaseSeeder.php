@@ -32,9 +32,9 @@ class DiseaseSeeder extends Seeder
                 'disease_image' => 'uploads/melanose.jpg',
             ],
             [
-                'name' => 'Healthy',
-                'treatment' => 'Perawatan pencegahan dengan fungisida dan insektisida secara teratur.',
-                'disease_image' => 'uploads/healthy.jpg',
+                'name' => 'Non Citrus Leaf',
+                'description' => 'Tanaman yang bukan tanaman jeruk.',
+                'treatment' => 'Tidak ada rawatan khusus.',
             ],
         ];
     

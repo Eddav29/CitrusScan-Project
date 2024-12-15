@@ -20,73 +20,99 @@ class PredictionController extends Controller
 
         // Simpan gambar ke folder storage/app/public/uploads
         $imagePath = $request->file('file')->store('uploads', 'public');
-
-        // Kirim gambar ke API model
         $response = Http::attach(
             'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
-        )->post('http://127.0.0.1:5000/predict');
-
+        )->post('http://127.0.0.1:5001/predict');
         if ($response->failed()) {
             return response()->json([
                 'message' => 'Failed to connect to the model API',
                 'details' => $response->body() ?: 'No response body'
             ], 500);
         }
-        
 
-        $responseData = $response->json();
+        //jika bukan daun jeruk
+        if($response->json()['predicted_class'] == 'Non-Daun'){
+           return response()->json([
+                'message' => 'Prediction successful',
+                'data' => [
+                    'prediction_id' => \Str::uuid(),
+                    'disease_id' => $this->getDiseaseIdByName($response->json()['predicted_class']),
+                    'disease' => 'Non Citrus Leaf',
+                    'confidence' => 1,
+                    'second_best' => null,
+                    'image_path' =>asset('storage' . $imagePath),
+                ],
+            ], 200);
+        }else{
+            // Kirim gambar ke API model
+            $response = Http::attach(
+                'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
+            )->post('http://127.0.0.1:5000/predict');
 
-        // Ambil data prediksi
-        $prediction = $responseData['predictions']['predicted_class'] ?? null;
-        $confidence = $responseData['predictions']['confidence'] ?? null;
-        $allProbabilities = $responseData['predictions']['all_probabilities'] ?? [];
+            if ($response->failed()) {
+                return response()->json([
+                    'message' => 'Failed to connect to the model API',
+                    'details' => $response->body() ?: 'No response body'
+                ], 500);
+            }
+            
 
-        // Ambil penyakit dengan probabilitas tertinggi kedua
-        $secondBest = collect($allProbabilities)
-            ->sortDesc()
-            ->skip(1)
-            ->map(function ($value, $key) {
-                return ['name' => $key, 'confidence' => $value];
-            })
-            ->first();
+            $responseData = $response->json();
+
+            // Ambil data prediksi
+            $prediction = $responseData['predictions']['predicted_class'] ?? null;
+            $confidence = $responseData['predictions']['confidence'] ?? null;
+            $allProbabilities = $responseData['predictions']['all_probabilities'] ?? [];
+
+            // Ambil penyakit dengan probabilitas tertinggi kedua
+            $secondBest = collect($allProbabilities)
+                ->sortDesc()
+                ->skip(1)
+                ->map(function ($value, $key) {
+                    return ['name' => $key, 'confidence' => $value];
+                })
+                ->first();
 
 
-        // Simpan data ke tabel predictions
-        $predictionRecord = Prediction::create([
-            'prediction_id' => \Str::uuid(),
-            'disease_id' => $this->getDiseaseIdByName($prediction),
-            'confidence' => $confidence,
-            'second_best_disease' => $this->getDiseaseIdByName($secondBest['name'] ?? null),
-            'second_best_disease_confidence' => $secondBest['confidence'] ?? null,
-        ]);
+            // Simpan data ke tabel predictions
+            $predictionRecord = Prediction::create([
+                'prediction_id' => \Str::uuid(),
+                'disease_id' => $this->getDiseaseIdByName($prediction),
+                'confidence' => $confidence,
+                'second_best_disease' => $this->getDiseaseIdByName($secondBest['name'] ?? null),
+                'second_best_disease_confidence' => $secondBest['confidence'] ?? null,
+            ]);
 
-        $user = User::find($request->user_id);
+            $user = User::find($request->user_id);
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            // Continue with the logic to insert into user_histories...
+            UserHistory::create([
+                'user_histories_id' => \Str::uuid(),
+                'user_id' => $request->user_id,
+                'prediction_id' => $predictionRecord->prediction_id,
+                'image_path' => $imagePath,
+                'created_at' => now(),  
+            ]);
+
+
+            return response()->json([
+                'message' => 'Prediction successful',
+                'data' => [
+                    'prediction_id' => $predictionRecord->prediction_id,
+                    'disease_id' => $predictionRecord->disease_id,
+                    'disease' => $prediction,
+                    'confidence' => $confidence,
+                    'second_best' => $secondBest,
+                    'image_path' =>asset('storage' . $imagePath),
+                ],
+            ], 200);
         }
 
-        // Continue with the logic to insert into user_histories...
-        UserHistory::create([
-            'user_histories_id' => \Str::uuid(),
-            'user_id' => $request->user_id,
-            'prediction_id' => $predictionRecord->prediction_id,
-            'image_path' => $imagePath,
-            'created_at' => now(),  
-        ]);
-
-
-        return response()->json([
-            'message' => 'Prediction successful',
-            'data' => [
-                'prediction_id' => $predictionRecord->prediction_id,
-                'disease_id' => $predictionRecord->disease_id,
-                'disease' => $prediction,
-                'confidence' => $confidence,
-                'second_best' => $secondBest,
-                'image_path' =>asset('storage' . $imagePath),
-            ],
-        ], 200);
+        
     }
 
     // Helper function untuk mendapatkan disease_id dari nama penyakit
@@ -99,7 +125,7 @@ class PredictionController extends Controller
             'Black spot' => 'Citrus Black Spot',
             'Melanose' => 'Citrus Melanose',
             'Healthy' => "Healthy Citrus",
-
+            'Non-Daun' => 'Non Citrus Leaf',
         ];
 
         // Ganti nama penyakit sesuai dengan tabel, jika ada
