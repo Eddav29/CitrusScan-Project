@@ -147,16 +147,18 @@ Untuk kasus yang parah:
                     break;
             }
 
-            DB::table('disease_treatments')->insert([
-                'disease_treatments_id' => Str::uuid(),
-                'disease_id' => $disease->disease_id,
-                'description' => $steps['description'],
-                'symptoms' => $steps['symptoms'],
-                'solutions' => $steps['solutions'],
-                'prevention' => $steps['prevention'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            if (!empty($steps)) {
+                DB::table('disease_treatments')->insert([
+                    'disease_treatments_id' => Str::uuid(),
+                    'disease_id' => $disease->disease_id,
+                    'description' => $steps['description'],
+                    'symptoms' => $steps['symptoms'],
+                    'solutions' => $steps['solutions'],
+                    'prevention' => $steps['prevention'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }

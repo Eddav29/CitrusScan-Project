@@ -47,8 +47,8 @@ class DiseaseSeeder extends Seeder
             DB::table('diseases')->insert([
                 'disease_id' => Str::uuid(),
                 'name' => $disease['name'],
-                'treatment' => $disease['treatment'],
-                'disease_image' => $disease['disease_image'],
+                'treatment' => $disease['treatment'] ?? null,
+                'disease_image' => $disease['disease_image'] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
