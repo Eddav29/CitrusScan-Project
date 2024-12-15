@@ -115,8 +115,10 @@ class _DiseaseDataWidgetState extends ConsumerState<DiseaseDataWidget> {
                   childAspectRatio: 3 / 4, // Aspect ratio for good design
                   physics: NeverScrollableScrollPhysics(),
                   children: diseaseDataState.diseases
-                      .where(
-                          (disease) => disease.name != "Healthy") // Filter here
+                      .where((disease) =>
+                          disease.name != "Healthy" &&
+                          disease.name != "Non Citrus Leaf") // Filter here
+
                       .map((disease) {
                     return _buildDiseaseCard(disease, context);
                   }).toList(),

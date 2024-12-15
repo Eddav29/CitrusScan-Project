@@ -137,8 +137,14 @@ Untuk kasus yang parah:
                     ];
                     break;
 
-                default:
-                    $steps = [];
+                    default:
+                    $steps = [
+                        'description' => '',
+                        'symptoms' => '',
+                        'solutions' => '',
+                        'prevention' => '',
+                    ];
+                    break;
             }
 
             DB::table('disease_treatments')->insert([

@@ -33,13 +33,13 @@ class DiseaseSeeder extends Seeder
             ],
             [
                 'name' => 'Healthy',
-                'description' => 'Tanaman yang sehat.',
+                'treatment' => 'Perawatan pencegahan dengan fungisida dan insektisida secara teratur.',
                 'disease_image' => 'uploads/healthy.jpg',
             ],
             [
                 'name' => 'Non Citrus Leaf',
-                'description' => 'Tanaman yang bukan tanaman jeruk.',
-                'treatment' => 'Tidak ada rawatan khusus.',
+                'treatment' => 'Tanaman yang bukan tanaman jeruk.',
+                'disease_image' => 'uploads/non-citrus-leaf.jpg',
             ],
         ];
     

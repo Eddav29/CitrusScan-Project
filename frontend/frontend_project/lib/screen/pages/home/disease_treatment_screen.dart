@@ -196,16 +196,20 @@ class _DiseaseTreatmentScreenState extends State<DiseaseTreatmentScreen> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+              child: CircleAvatar(
+                backgroundColor: Colors.white.withOpacity(0.5),
+                radius: 20,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
               ),
             ),
-          ),
+          )
         ],
       ),
       bottomNavigationBar: BottomAppBar(
