@@ -33,12 +33,11 @@ class DiseaseSeeder extends Seeder
             ],
             [
                 'name' => 'Healthy',
-                'description' => 'Tanaman yang sehat.',
+                'treatment' => 'Rawat tanaman citrus dengan penyiraman teratur,serta menjaga kebersihan dan kelembapan tanah.',
                 'disease_image' => 'uploads/healthy.jpg',
             ],
             [
-                'name' => 'Non Citrus Leaf',
-                'description' => 'Tanaman yang bukan tanaman jeruk.',
+                'name' => 'Not Citrus Leaf',
                 'treatment' => 'Tidak ada rawatan khusus.',
             ],
         ];
@@ -47,8 +46,8 @@ class DiseaseSeeder extends Seeder
             DB::table('diseases')->insert([
                 'disease_id' => Str::uuid(),
                 'name' => $disease['name'],
-                'treatment' => $disease['treatment'],
-                'disease_image' => $disease['disease_image'],
+                'treatment' => $disease['treatment'] ?? null,
+                'disease_image' => $disease['disease_image'] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

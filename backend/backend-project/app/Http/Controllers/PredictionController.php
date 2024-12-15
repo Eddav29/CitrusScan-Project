@@ -27,7 +27,7 @@ class PredictionController extends Controller
             return response()->json([
                 'message' => 'Failed to connect to the model API',
                 'details' => $response->body() ?: 'No response body'
-            ], 500);
+            ], 404);
         }
 
         //jika bukan daun jeruk
@@ -48,14 +48,14 @@ class PredictionController extends Controller
             $response = Http::attach(
                 'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
             )->post('http://127.0.0.1:5000/predict');
-
             if ($response->failed()) {
                 return response()->json([
                     'message' => 'Failed to connect to the model API',
                     'details' => $response->body() ?: 'No response body'
-                ], 500);
+                ], 404);
             }
-            
+
+
 
             $responseData = $response->json();
 
@@ -88,7 +88,8 @@ class PredictionController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'User not found'], 404);
             }
-
+            \Log::info('Disease Name: ' . $prediction);
+            \Log::info('Mapped Disease ID: ' . $this->getDiseaseIdByName($prediction));
             // Continue with the logic to insert into user_histories...
             UserHistory::create([
                 'user_histories_id' => \Str::uuid(),
@@ -120,12 +121,12 @@ class PredictionController extends Controller
     {
         // Pemetaan nama penyakit dari API ke tabel diseases
         $diseaseMapping = [
-            'Canker' => 'Citrus Canker',
-            'Greening' => 'Citrus Greening (HLB)',
-            'Black spot' => 'Citrus Black Spot',
-            'Melanose' => 'Citrus Melanose',
-            'Healthy' => "Healthy Citrus",
-            'Non-Daun' => 'Non Citrus Leaf',
+            'Canker' => 'Canker',
+            'Greening' => 'Greening',
+            'Black spot' => 'Black Spot',
+            'Melanose' => 'Melanose',
+            'Healthy' => "Healthy ",
+            'Non-Daun' => 'Not Citrus Leaf',
         ];
 
         // Ganti nama penyakit sesuai dengan tabel, jika ada
