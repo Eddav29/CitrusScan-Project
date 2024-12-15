@@ -63,21 +63,19 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     // Check the current route path using GoRouter's currentConfiguration.fullPath
-    final currentPath = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+    final currentPath =
+        GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+
+    // Default to 0 if no valid route matches
     if (currentPath == '/home') {
       _currentIndex = 0;
-    } else if (currentPath == '/profile') {
+    } else if (currentPath == '/profile' ||
+        currentPath == '/profileEdit' ||
+        currentPath == '/changePassword') {
       _currentIndex = 1;
-    }  else if (currentPath == '/profileEdit') {
-      _currentIndex = 1;
+    } else {
+      _currentIndex = 0; // Default to home if no matching path
     }
-    else if (currentPath == '/changePassword') {
-      _currentIndex = 1;
-    }
-     else {
-      _currentIndex = -1; // Nonaktifkan link navigasi jika bukan di halaman Home atau Profile
-    }
-
 
     return Stack(
       clipBehavior: Clip.none, // Mencegah elemen terpotong di luar batas
@@ -86,7 +84,8 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           currentIndex: _currentIndex, // Menandai item mana yang sedang aktif
           onTap: (index) {
             setState(() {
-              _currentIndex = index; // Mengubah indeks yang dipilih saat item ditekan
+              _currentIndex =
+                  index; // Mengubah indeks yang dipilih saat item ditekan
             });
 
             // Penanganan navigasi untuk Home dan Profile menggunakan go_router
@@ -100,32 +99,40 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.home,
-                color: _currentIndex == 0 ? Color(0xFF215C3C) : Colors.grey, // Warna hijau jika aktif
+                color: _currentIndex == 0
+                    ? Color(0xFF215C3C)
+                    : Colors.grey, // Warna hijau jika aktif
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,
-                color: _currentIndex == 1 ? Color(0xFF215C3C) : Colors.grey, // Warna hijau jika aktif
+                color: _currentIndex == 1
+                    ? Color(0xFF215C3C)
+                    : Colors.grey, // Warna hijau jika aktif
               ),
               label: 'Profile',
             ),
           ],
           type: BottomNavigationBarType.fixed, // Jenis navigasi bar tetap
-          backgroundColor: Colors.white,       // Warna latar belakang bar navigasi
-          elevation: 0,                        // Menghilangkan efek bayangan
-          selectedItemColor: Color(0xFF215C3C),  // Warna item yang dipilih (hijau)
-          unselectedItemColor: Colors.grey,      // Warna item yang tidak dipilih (abu-abu)
+          backgroundColor: Colors.white, // Warna latar belakang bar navigasi
+          elevation: 0, // Menghilangkan efek bayangan
+          selectedItemColor:
+              Color(0xFF215C3C), // Warna item yang dipilih (hijau)
+          unselectedItemColor:
+              Colors.grey, // Warna item yang tidak dipilih (abu-abu)
         ),
         Positioned(
           top: -30, // Posisi tombol melayang di atas navbar
-          left: MediaQuery.of(context).size.width * 0.5 - 28, // Pusatkan tombol di navbar
+          left: MediaQuery.of(context).size.width * 0.5 -
+              28, // Pusatkan tombol di navbar
           child: FloatingActionButton(
             onPressed: _showScanOptions,
-            backgroundColor: Color(0xFF215C3C),  // Warna tombol (hijau)
-            child: Icon(Icons.center_focus_strong, size: 30, color: Colors.white), // Ikon untuk tombol scan
-            elevation: 2,  // Memberikan sedikit bayangan untuk tombol
+            backgroundColor: Color(0xFF215C3C), // Warna tombol (hijau)
+            child: Icon(Icons.center_focus_strong,
+                size: 30, color: Colors.white), // Ikon untuk tombol scan
+            elevation: 2, // Memberikan sedikit bayangan untuk tombol
           ),
         ),
       ],

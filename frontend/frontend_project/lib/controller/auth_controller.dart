@@ -36,7 +36,7 @@ class AuthController extends StateNotifier<AuthState> {
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
       final response = await _authApi.login(
         email: email,
         password: password,
@@ -136,5 +136,5 @@ class AuthController extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
-  }   
+  }
 }

@@ -22,7 +22,8 @@ class ProfileApi {
     }
   }
 
-  Future<User> updateProfile(String token, {String? name, String? email}) async {
+  Future<User> updateProfile(String token,
+      {String? name, String? email}) async {
     try {
       final response = await _dio.put(
         '/profile',
@@ -42,7 +43,8 @@ class ProfileApi {
     }
   }
 
-  Future<void> updatePassword(String token, String oldPassword, String newPassword) async {
+  Future<void> updatePassword(
+      String token, String oldPassword, String newPassword) async {
     try {
       await _dio.put(
         '/profile/password',

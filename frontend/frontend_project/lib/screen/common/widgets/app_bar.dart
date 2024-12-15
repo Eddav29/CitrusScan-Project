@@ -1,62 +1,96 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:citrus_scan/data/model/user/user.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
   final Color backgroundColor;
 
   CustomAppBar({required this.backgroundColor});
 
   @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: backgroundColor, // Menentukan warna latar belakang AppBar
-      elevation: 0, // Menghilangkan bayangan pada AppBar
-      title: Row(
-        children: [
-          // Menampilkan logo di sebelah kiri
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white, // Mengatur warna background logo menjadi putih
-              shape: BoxShape.circle, // Membuat background berbentuk bulat
-            ),
-            child: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/logo.png'), // Menggunakan logo dari folder assets
-              radius: 20, // Ukuran logo
-            ),
-          ),
-          SizedBox(width: 10), // Spasi antara logo dan teks
-          
-          // Teks sambutan di sebelah kanan logo
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Mengatur teks berposisi ke kiri
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 7), // Jarak teks dari atas
-                child: Text(
-                  "Selamat Datang!", // Teks utama
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black, // Warna teks hitam
-                  ),
-                ),
-              ),
-              SizedBox(height: 6), // Jarak antara dua baris teks
-              Text(
-                "Sekawan Limo", // Teks kedua (nama pengguna atau perusahaan)
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black, // Warna teks hitam
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      automaticallyImplyLeading: false, // Tidak menampilkan tombol 'Back' secara otomatis
-    );
+  _CustomAppBarState createState() => _CustomAppBarState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(80.0);
+}
+
+class _CustomAppBarState extends ConsumerState<CustomAppBar> {
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserFromPrefs();
+  }
+
+  // Fungsi untuk mengambil user dari SharedPreferences
+  Future<void> _getUserFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+    if (userJson != null) {
+      setState(() {
+        user = User.fromJson(jsonDecode(userJson)); // Mengupdate state user
+      });
+    }
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(70.0); // Ukuran tinggi AppBar
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: widget.backgroundColor,
+      elevation: 0,
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: CircleAvatar(
+              backgroundImage: AssetImage('assets/images/logo.png'),
+              radius: 22,
+            ),
+          ),
+          SizedBox(width: 12),
+
+          // Teks sambutan di sebelah kanan logo
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    "Selamat Datang!",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  user?.name ??
+                      'Guest User', // Tampilkan nama user dari SharedPreferences
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black54,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      automaticallyImplyLeading: false,
+    );
+  }
 }
