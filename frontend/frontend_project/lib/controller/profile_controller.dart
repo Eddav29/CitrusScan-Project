@@ -33,9 +33,9 @@ class ProfileController extends StateNotifier<ProfileState> {
 
   Future<void> updatePassword(String token, String oldPassword, String newPassword) async {
     try {
-      state = state.copyWith(isLoading: true);
-      final user = await _profileApi.updatePassword(token, oldPassword, newPassword);
-      state = state.copyWith(user: user, isLoading: false, isUpdated: true);
+      state = state.copyWith(isLoading: true, error: null);
+      await _profileApi.updatePassword(token, oldPassword, newPassword);
+      state = state.copyWith(isLoading: false, isUpdated: true, error: null);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }

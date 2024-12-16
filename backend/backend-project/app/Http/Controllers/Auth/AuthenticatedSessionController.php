@@ -21,9 +21,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         
         $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        
+        $token = $user->createToken('auth_token')->plainTextToken;  
 
         return response()->json([
             'access_token' => $token,
@@ -113,8 +111,7 @@ class AuthenticatedSessionController extends Controller
             $token = $request->bearerToken();
             \Log::info("yang diterima ".$token);
             $accessToken = PersonalAccessToken::findToken($token);
-            \Log::info("FInd token".$accessToken);
-
+            \log::info($accessToken->tokenable);
             // Periksa apakah token valid
             if (!$accessToken || !$accessToken->tokenable) {
                 return response()->json(['error' => 'User not authenticated'], 401);
@@ -122,7 +119,6 @@ class AuthenticatedSessionController extends Controller
 
             // Ambil pengguna dari token
             $user = $accessToken->tokenable;
-            Log::info('Authenticated user: ' . $user->email);
 
             // Validasi input
             $request->validate([
@@ -147,37 +143,43 @@ class AuthenticatedSessionController extends Controller
     public function updateProfilePicture(Request $request)
     {
         // Ambil token dari header Authorization
-        $token = $request->bearerToken();
-        $accessToken = PersonalAccessToken::findToken($token);
-    
-        // Periksa apakah token valid
-        if (!$accessToken || !$accessToken->tokenable) {
-            return response()->json(['error' => 'User not authenticated'], 401);
-        }
-    
-        // Ambil pengguna dari token
-        $user = $accessToken->tokenable;
-    
-        // Validasi input
-        $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-    
-        // Simpan path gambar lama
-        $oldProfilePicturePath = $user->profile_picture;
-    
-        // Update profile picture
-        $profilePicture = $request->file('profile_picture');
+    $token = $request->bearerToken();
+    $accessToken = PersonalAccessToken::findToken($token);
+
+    // Periksa apakah token valid
+    if (!$accessToken || !$accessToken->tokenable) {
+        return response()->json(['error' => 'User not authenticated'], 401);
+    }
+
+    // Ambil pengguna dari token
+    $user = $accessToken->tokenable;
+
+    // Validasi input
+    $request->validate([
+        'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
+
+    // Simpan path gambar lama
+    $oldProfilePicturePath = $user->profile_picture;
+
+    // Pastikan file yang di-upload adalah gambar yang valid
+    $profilePicture = $request->file('profile_picture');
+    if ($profilePicture && $profilePicture->isValid()) {
+        // Menyimpan gambar baru
         $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
         $user->profile_picture = $profilePicturePath;
         $user->save();
-    
+
         // Hapus file lama jika ada
-        if ($oldProfilePicturePath) {
+        if ($oldProfilePicturePath && Storage::disk('public')->exists($oldProfilePicturePath)) {
             Storage::disk('public')->delete($oldProfilePicturePath);
         }
-    
+
         return response()->json(['user' => $user], 200);
+    } else {
+        return response()->json(['error' => 'Invalid image file'], 400);
+    }
+
     }
     
 }

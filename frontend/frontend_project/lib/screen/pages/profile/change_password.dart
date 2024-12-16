@@ -19,41 +19,50 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  Future<String?> _getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+  @override
+  void dispose() {
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   Future<void> _handleChangePassword() async {
-    if (!_formKey.currentState!.validate()) return; // Form validation
+    if (!_formKey.currentState!.validate()) return;
+
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
 
-    // Get token from shared preferences
     final token = await _getToken();
-    if (token == null) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+    if (token != null) {
+      await ref.read(profileControllerProvider.notifier).updatePassword(
+            token,
+            _oldPasswordController.text,
+            _newPasswordController.text,
+          );
+
+      final state = ref.read(profileControllerProvider);
+      if (state.error == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password updated successfully!')),
+        );
+        context.go('/profile');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.error!)),
+        );
+      }
     }
 
-    // Here you can send the request to change the password
-    // Simulating a network request with a delay
-    await Future.delayed(Duration(seconds: 2));
-
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Password changed successfully!')),
-    );
-
     setState(() {
-      _isLoading = false; // Hide loading indicator
+      _isLoading = false;
     });
+  }
 
-    // Navigate back to profile screen after password change
-    context.go('/profile');
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
   @override
@@ -65,7 +74,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/profile'),
+          onPressed: () => context.go('/profile'), // Navigate back to profile
         ),
         title: Text(
           'Change Password',
