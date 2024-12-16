@@ -46,8 +46,8 @@ class ProfileApi {
   Future<void> updatePassword(
       String token, String oldPassword, String newPassword) async {
     try {
-      await _dio.put(
-        '/profile/password',
+      final response = await _dio.put(
+        '/update-password',
         data: {
           'old_password': oldPassword,
           'new_password': newPassword,
@@ -59,6 +59,9 @@ class ProfileApi {
           },
         ),
       );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update password');
+      }
     } on DioException catch (e) {
       throw _handleError(e);
     }
