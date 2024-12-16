@@ -31,7 +31,8 @@ Route::put('/profile', [AuthenticatedSessionController::class, 'updateProfile'])
 
 // Route untuk mengupdate password pengguna yang sedang login
 Route::put('/update-password', [AuthenticatedSessionController::class, 'updatePassword']);
-
+//route untuk edit profile picture
+Route::put('/update-profile-picture', [AuthenticatedSessionController::class, 'updateProfilePicture']);
 // Route untuk mengambil data penyakit
 Route::get('/diseases', [DiseaseController::class, 'index']);
 Route::get('/diseases/{id}', [DiseaseController::class, 'show']);
@@ -47,3 +48,4 @@ Route::get('/user-history/{user_id}/history/{user_history_id}', [UserHistoryCont
 
 //Route untuk mengirim email 
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationNotification']);
+

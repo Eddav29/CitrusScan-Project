@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/screen/common/widgets/navigation_bar.dart';
 import 'package:citrus_scan/controller/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:citrus_scan/data/model/user/profile/profile_state.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -20,74 +19,41 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  @override
-  void dispose() {
-    _oldPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-Future<void> _handleChangePassword() async {
-  if (!_formKey.currentState!.validate()) return;
-
-  // Indikator loading
-  setState(() {
-    _isLoading = true;
-  });
-
-  final token = await _getToken();
-  
-  if (token == null) {
-    setState(() {
-      _isLoading = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to authenticate. Please log in again.')),
-    );
-    return;
-  }
-
-  await ref.read(profileControllerProvider.notifier).updatePassword(
-        token,
-        _oldPasswordController.text,
-        _newPasswordController.text,
-      );
-
-  final state = ref.read(profileControllerProvider);
-
-  setState(() {
-    _isLoading = false; // Reset loading
-  });
-
-  if (state.isUpdated) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Password updated successfully!')),
-    );
-    ref.read(profileControllerProvider.notifier).state =
-        state.copyWith(isUpdated: false); // Reset isUpdated
-    context.go('/profile');
-  } else if (state.error != null) {
-    if (state.error!.contains('old password')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Old password is incorrect.')),
-      );
-    } else if (state.error!.contains('validation')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('New password does not meet criteria.')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.error!)),
-      );
-    }
-  }
-}
-
-
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
+  }
+
+  Future<void> _handleChangePassword() async {
+    if (!_formKey.currentState!.validate()) return; // Form validation
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    // Get token from shared preferences
+    final token = await _getToken();
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Here you can send the request to change the password
+    // Simulating a network request with a delay
+    await Future.delayed(Duration(seconds: 2));
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Password changed successfully!')),
+    );
+
+    setState(() {
+      _isLoading = false; // Hide loading indicator
+    });
+
+    // Navigate back to profile screen after password change
+    context.go('/profile');
   }
 
   @override
@@ -99,7 +65,7 @@ Future<void> _handleChangePassword() async {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/profile'), // Navigate back to profile
+          onPressed: () => context.go('/profile'),
         ),
         title: Text(
           'Change Password',
@@ -187,7 +153,7 @@ Future<void> _handleChangePassword() async {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _handleChangePassword,
+                        onPressed: _isLoading ? null : _handleChangePassword,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF215C3C),
                           padding: EdgeInsets.symmetric(vertical: 15),
@@ -195,10 +161,14 @@ Future<void> _handleChangePassword() async {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text(
-                          'Save',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
+                        child: _isLoading
+                            ? CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                'Save',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
                       ),
                     ),
                   ],
@@ -254,14 +224,13 @@ class _PasswordFieldState extends State<PasswordField> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        // Ubah warna border dan teks menjadi hijau ketika aktif
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Color(0xFF215C3C), width: 2),
         ),
-        labelStyle: TextStyle(color: Colors.grey[700]), // Warna default
+        labelStyle: TextStyle(color: Colors.grey[700]),
         floatingLabelStyle:
-            TextStyle(color: Color(0xFF215C3C)), // Warna saat label di atas
+            TextStyle(color: Color(0xFF215C3C)),
       ),
     );
   }

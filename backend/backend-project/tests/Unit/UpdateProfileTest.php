@@ -98,5 +98,50 @@ class UpdateProfileTest extends TestCase
 
 
     //test update profile_picture
-    
+    public function testUpdateProfilePicture()
+    {
+        // Buat pengguna dan autentikasi
+        $user = User::factory()->create([
+            'email' => 'testuser@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        $loginResponse = $this->postJson('/api/login', [
+            'email' => 'testuser@example.com',
+            'password' => 'password',
+        ]);
+
+        $loginResponse->assertStatus(200);
+        $token = $loginResponse->json('access_token');
+
+        // Simulasi penyimpanan file
+        Storage::fake('public');
+
+        // Buat file gambar palsu
+        $file = UploadedFile::fake()->image('profile_picture.jpg');
+
+        // Simpan gambar lama
+        $oldProfilePicturePath = 'profile_pictures/old_profile_picture.jpg';
+        Storage::disk('public')->put($oldProfilePicturePath, 'old content');
+        $user->profile_picture = $oldProfilePicturePath;
+        $user->save();
+
+        // Panggil endpoint untuk mengupdate gambar profil
+        $updateProfilePictureResponse = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/update-profile-picture', [
+            'profile_picture' => $file,
+        ]);
+
+        // Verifikasi respons
+        $updateProfilePictureResponse->assertStatus(200);
+        $updateProfilePictureResponse->assertJsonStructure(['user' => ['id', 'name', 'email', 'profile_picture']]);
+
+        // Verifikasi gambar baru disimpan
+        $newProfilePicturePath = $user->fresh()->profile_picture;
+        Storage::disk('public')->assertExists($newProfilePicturePath);
+
+        // Verifikasi gambar lama dihapus
+        Storage::disk('public')->assertMissing($oldProfilePicturePath);
+    }
 }

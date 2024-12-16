@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -75,7 +77,9 @@ class AuthenticatedSessionController extends Controller
     {
         // Ambil token dari header Authorization
         $token = $request->bearerToken();
+        \Log::info($token);
         $accessToken = PersonalAccessToken::findToken($token);
+        \Log::info($accessToken);
 
         // Periksa apakah token valid
         if (!$accessToken || !$accessToken->tokenable) {
@@ -103,37 +107,41 @@ class AuthenticatedSessionController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    public function updatePassword(Request $request)
-    {
-        // Ambil token dari header Authorization
-        $token = $request->bearerToken();
-        $accessToken = PersonalAccessToken::findToken($token);
+        public function updatePassword(Request $request)
+        {
+            // Ambil token dari header Authorization
+            $token = $request->bearerToken();
+            \Log::info("yang diterima ".$token);
+            $accessToken = PersonalAccessToken::findToken($token);
+            \Log::info("FInd token".$accessToken);
 
-        // Periksa apakah token valid
-        if (!$accessToken || !$accessToken->tokenable) {
-            return response()->json(['error' => 'User not authenticated'], 401);
+            // Periksa apakah token valid
+            if (!$accessToken || !$accessToken->tokenable) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
+
+            // Ambil pengguna dari token
+            $user = $accessToken->tokenable;
+            Log::info('Authenticated user: ' . $user->email);
+
+            // Validasi input
+            $request->validate([
+                'old_password' => 'required',
+                'new_password' => 'required|min:8|confirmed',
+                'new_password_confirmation' => 'required',
+            ]);
+
+            // Periksa apakah password lama benar
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json(['error' => 'Old password is incorrect'], 400);
+            }
+
+            // Update password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json(['message' => 'Password updated successfully'], 200);
         }
-
-        // Ambil pengguna dari token
-        $user = $accessToken->tokenable;
-
-        // Validasi input
-        $request->validate([
-            'old_password' => 'required|string',
-            'new_password' => 'required|string|min:8|confirmed',
-        ]);
-
-        // Periksa apakah password lama cocok
-        if (!Hash::check($request->input('old_password'), $user->password)) {
-            return response()->json(['error' => 'Old password is incorrect'], 400);
-        }
-
-        // Update password
-        $user->password = Hash::make($request->input('new_password'));
-        $user->save();
-
-        return response()->json(['message' => 'Password updated successfully'], 200);
-    }
     
     //update profile_picture
     public function updateProfilePicture(Request $request)
@@ -141,26 +149,34 @@ class AuthenticatedSessionController extends Controller
         // Ambil token dari header Authorization
         $token = $request->bearerToken();
         $accessToken = PersonalAccessToken::findToken($token);
-
+    
         // Periksa apakah token valid
         if (!$accessToken || !$accessToken->tokenable) {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
-
+    
         // Ambil pengguna dari token
         $user = $accessToken->tokenable;
-
+    
         // Validasi input
         $request->validate([
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-
+    
+        // Simpan path gambar lama
+        $oldProfilePicturePath = $user->profile_picture;
+    
         // Update profile picture
         $profilePicture = $request->file('profile_picture');
         $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
         $user->profile_picture = $profilePicturePath;
         $user->save();
-
+    
+        // Hapus file lama jika ada
+        if ($oldProfilePicturePath) {
+            Storage::disk('public')->delete($oldProfilePicturePath);
+        }
+    
         return response()->json(['user' => $user], 200);
     }
     
