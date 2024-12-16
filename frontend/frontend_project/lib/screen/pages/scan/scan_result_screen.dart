@@ -205,47 +205,9 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: 24),
-            _buildDiseaseDetails(prediction.diseaseId),
           ],
         ),
     };
   }
 
-  Widget _buildDiseaseDetails(String diseaseId) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final state = ref.watch(diseaseDataControllerProvider);
-
-        return switch (state) {
-          DiseaseDataInitial() => const SizedBox(),
-          DiseaseDataLoading() =>
-            const Center(child: CircularProgressIndicator()),
-          DiseaseDataError(message: var message) =>
-            Center(child: Text('Error: $message')),
-          DiseaseDataDetailSuccess(diseaseDetail: var disease) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  disease.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Description:',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Treatment:',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(disease.treatment ?? 'No treatment information available'),
-              ],
-            ),
-          _ => const SizedBox(),
-        };
-      },
-    );
-  }
 }

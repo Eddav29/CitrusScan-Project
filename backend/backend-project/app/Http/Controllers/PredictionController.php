@@ -37,7 +37,7 @@ class PredictionController extends Controller
                 'data' => [
                     'prediction_id' => \Str::uuid(),
                     'disease_id' => $this->getDiseaseIdByName($response->json()['predicted_class']),
-                    'disease' => 'Non Citrus Leaf',
+                    'disease' => 'Not Citrus Leaf',
                     'confidence' => 1,
                     'second_best' => null,
                     'image_path' =>asset('storage' . $imagePath),

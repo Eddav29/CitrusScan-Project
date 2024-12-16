@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Muat model TensorFlow yang sudah dilatih
-MODEL_PATH = 'model_daun.keras'  # Path ke model
+MODEL_PATH = 'model/model_daun.keras'  # Path ke model
 model = tf.keras.models.load_model(MODEL_PATH)
 
 

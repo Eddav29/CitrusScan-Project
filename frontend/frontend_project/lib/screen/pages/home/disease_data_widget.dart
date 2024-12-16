@@ -117,7 +117,7 @@ class _DiseaseDataWidgetState extends ConsumerState<DiseaseDataWidget> {
                   children: diseaseDataState.diseases
                       .where((disease) =>
                           disease.name != "Healthy" &&
-                          disease.name != "Non Citrus Leaf") // Filter here
+                          disease.name != "Not Citrus Leaf") // Filter here
 
                       .map((disease) {
                     return _buildDiseaseCard(disease, context);

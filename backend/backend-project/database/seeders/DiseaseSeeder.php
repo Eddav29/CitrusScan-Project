@@ -37,7 +37,7 @@ class DiseaseSeeder extends Seeder
                 'disease_image' => 'uploads/healthy.jpg',
             ],
             [
-                'name' => 'Non Citrus Leaf',
+                'name' => 'Not Citrus Leaf',
                 'treatment' => 'Tanaman yang bukan tanaman jeruk.',
                 'disease_image' => 'uploads/non-citrus-leaf.jpg',
             ],
