@@ -22,9 +22,9 @@ class DiseaseSeeder extends Seeder
                 'disease_image' => 'uploads/greening.jpg',
             ],
             [
-                'name' => 'Cancer',
+                'name' => 'Canker',
                 'treatment' => 'Aplikasikan bakterisida berbasis tembaga dan pangkas bagian yang terinfeksi.',
-                'disease_image' => 'uploads/cancer.jpg',
+                'disease_image' => 'uploads/canker.jpg',
             ],
             [
                 'name' => 'Melanose',

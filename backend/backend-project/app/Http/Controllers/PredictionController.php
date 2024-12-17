@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Prediction;
 use App\Models\UserHistory;
 use App\Models\User;
+use App\Models\Disease; // Pastikan model Disease di-import
 
 class PredictionController extends Controller
 {
@@ -23,6 +24,7 @@ class PredictionController extends Controller
         $response = Http::attach(
             'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
         )->post('http://127.0.0.1:5001/predict');
+        
         if ($response->failed()) {
             return response()->json([
                 'message' => 'Failed to connect to the model API',
@@ -31,8 +33,8 @@ class PredictionController extends Controller
         }
 
         //jika bukan daun jeruk
-        if($response->json()['predicted_class'] == 'Non-Daun'){
-           return response()->json([
+        if ($response->json()['predicted_class'] == 'Non-Daun') {
+            return response()->json([
                 'message' => 'Prediction successful',
                 'data' => [
                     'prediction_id' => \Str::uuid(),
@@ -40,22 +42,21 @@ class PredictionController extends Controller
                     'disease' => 'Not Citrus Leaf',
                     'confidence' => 1,
                     'second_best' => null,
-                    'image_path' =>asset('storage' . $imagePath),
+                    'image_path' => asset('storage/' . $imagePath),
                 ],
             ], 200);
-        }else{
+        } else {
             // Kirim gambar ke API model
             $response = Http::attach(
                 'file', file_get_contents(storage_path('app/public/' . $imagePath)), $request->file('file')->getClientOriginalName()
             )->post('http://127.0.0.1:5000/predict');
+            
             if ($response->failed()) {
                 return response()->json([
                     'message' => 'Failed to connect to the model API',
                     'details' => $response->body() ?: 'No response body'
                 ], 404);
             }
-
-
 
             $responseData = $response->json();
 
@@ -73,7 +74,6 @@ class PredictionController extends Controller
                 })
                 ->first();
 
-
             // Simpan data ke tabel predictions
             $predictionRecord = Prediction::create([
                 'prediction_id' => \Str::uuid(),
@@ -83,22 +83,33 @@ class PredictionController extends Controller
                 'second_best_disease_confidence' => $secondBest['confidence'] ?? null,
             ]);
 
+            // Mengambil data penyakit berdasarkan prediction_id
+            $disease = Disease::with('treatments')->find($predictionRecord->disease_id);
+
+            // Menambahkan informasi treatment pada response
+            $treatmentData = $disease ? $disease->treatments->map(function ($treatment) {
+                return [
+                    'description' => $treatment->description,
+                    'symptoms' => $treatment->symptoms,
+                    'solutions' => $treatment->solutions,
+                    'prevention' => $treatment->prevention,
+                ];
+            }) : [];
+
             $user = User::find($request->user_id);
 
             if (!$user) {
                 return response()->json(['message' => 'User not found'], 404);
             }
-            \Log::info('Disease Name: ' . $prediction);
-            \Log::info('Mapped Disease ID: ' . $this->getDiseaseIdByName($prediction));
-            // Continue with the logic to insert into user_histories...
+
+            // Simpan riwayat pengguna
             UserHistory::create([
                 'user_histories_id' => \Str::uuid(),
                 'user_id' => $request->user_id,
                 'prediction_id' => $predictionRecord->prediction_id,
                 'image_path' => $imagePath,
-                'created_at' => now(),  
+                'created_at' => now(),
             ]);
-
 
             return response()->json([
                 'message' => 'Prediction successful',
@@ -108,12 +119,11 @@ class PredictionController extends Controller
                     'disease' => $prediction,
                     'confidence' => $confidence,
                     'second_best' => $secondBest,
-                    'image_path' =>asset('storage' . $imagePath),
+                    'image_path' => asset('storage/' . $imagePath),
+                    'treatment' => $treatmentData, // Tambahkan informasi treatment
                 ],
             ], 200);
         }
-
-        
     }
 
     // Helper function untuk mendapatkan disease_id dari nama penyakit
@@ -125,7 +135,7 @@ class PredictionController extends Controller
             'Greening' => 'Greening',
             'Black spot' => 'Black Spot',
             'Melanose' => 'Melanose',
-            'Healthy' => "Healthy ",
+            'Healthy' => "Healthy",
             'Non-Daun' => 'Not Citrus Leaf',
         ];
 
@@ -137,3 +147,4 @@ class PredictionController extends Controller
         return $diseaseId;
     }
 }
+

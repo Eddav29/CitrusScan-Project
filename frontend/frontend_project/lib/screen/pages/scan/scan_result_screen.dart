@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:citrus_scan/data/model/prediction/prediction_state.dart';
-import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/provider/provider.dart';
 
 class ScanResultScreen extends ConsumerStatefulWidget {
@@ -29,22 +28,50 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
     final predictionState = ref.watch(predictionControllerProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromRGBO(234, 245, 239, 1),
       body: Stack(
         children: [
+          // Display image
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.file(
                 File(widget.imagePath),
-                height: screenHeight * 0.45,
+                height: screenHeight * 0.4,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ],
           ),
+
+          // Positioned Back Arrow Icon
           Positioned(
-            top: screenHeight * 0.4,
+            top: 16,
+            left: 16,
+            child: Container(
+              padding: EdgeInsets.all(2.0),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.white.withOpacity(0.5),
+                radius: 20,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
+              ),
+            ),
+          ),
+
+          // Rest of the UI content
+          Positioned(
+            top: screenHeight * 0.35,
             left: 0,
             right: 0,
             bottom: 0,
@@ -70,75 +97,7 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
               ),
             ),
           ),
-          Positioned(
-            top: 16,
-            left: 16,
-            child: Container(
-              padding: EdgeInsets.all(2.0),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Color(0xFF215C3C)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-              ),
-            ),
-          ),
         ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref
-                        .read(predictionControllerProvider.notifier)
-                        .predict(widget.imagePath);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF215C3C),
-                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: Size(0, 56),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.center_focus_strong,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Deteksi Lagi',
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -180,34 +139,165 @@ class _ScanResultScreenState extends ConsumerState<ScanResultScreen> {
       PredictionSuccess(prediction: var prediction) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              prediction.disease,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            // Conditional Background Color and Description
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _getBackgroundColor(prediction.disease),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[200],
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/citrus.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          prediction.disease,
+                          style: TextStyle(
+                            fontFamily: 'Gilroy',
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          _getDescriptionText(
+                              prediction.disease, prediction.confidence),
+                          style: TextStyle(
+                            fontFamily: 'Gilroy',
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Tingkat Kepercayaan: ${(prediction.confidence * 100).toStringAsFixed(1)}%',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            if (prediction.secondBest != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Kemungkinan lain: ${prediction.secondBest!['name']} (${(prediction.secondBest!['confidence'] * 100).toStringAsFixed(1)}%)',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
+            const SizedBox(height: 16),
+
+            // Additional treatment steps if available
+            if (prediction.treatment.isNotEmpty)
+              ...prediction.treatment.map((step) {
+                return Column(
+                  children: [
+                    buildInfoBox(
+                      title: 'Deskripsi',
+                      content: step.description,
+                      icon: Icons.info,
+                    ),
+                    SizedBox(height: 16),
+                    buildInfoBox(
+                      title: 'Gejala',
+                      content: step.symptoms,
+                      icon: Icons.warning,
+                    ),
+                    SizedBox(height: 16),
+                    buildInfoBox(
+                      title: 'Solusi',
+                      content: step.solutions,
+                      icon: Icons.check_circle,
+                    ),
+                    SizedBox(height: 16),
+                    buildInfoBox(
+                      title: 'Pencegahan',
+                      content: step.prevention,
+                      icon: Icons.shield,
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                );
+              }).toList(),
           ],
         ),
     };
   }
 
+  // Function to determine background color based on disease detection
+  Color _getBackgroundColor(String disease) {
+    if (disease == "Not Citrus Leaf") {
+      return Colors.grey; // Grey for Not Citrus Leaf
+    } else if (disease == "Healthy") {
+      return Colors.green; // Green for Healthy leaves
+    }
+    return Colors.red; // Default red color if disease not recognized
+  }
+
+  // Function to provide description based on the detected disease
+  String _getDescriptionText(String disease, double confidence) {
+    if (disease == "Not Citrus Leaf") {
+      return "Gambar ini bukan daun jeruk, mohon pastikan gambar yang dipindai benar.";
+    } else if (disease == "Healthy") {
+      return "Daun ini terdeteksi sehat tanpa tanda-tanda penyakit.";
+    }
+    return "${(confidence * 100).toStringAsFixed(1)}% daun terdeteksi berpenyakit $disease."; // Default message if unknown disease
+  }
+
+  Widget buildInfoBox({
+    required String title,
+    required String content,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.green, size: 28),
+              SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Gilroy',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+            content,
+            style: TextStyle(
+              fontFamily: 'Gilroy',
+              fontSize: 16,
+              color: Colors.black.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

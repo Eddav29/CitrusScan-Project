@@ -70,11 +70,11 @@ Untuk kasus yang parah:
                     ];
                     break;
 
-                case 'Cancer':
+                case 'Canker':
                     $steps = [
-                        'description' => 'cancer pada tanaman jeruk disebabkan oleh infeksi bakteri atau jamur, seperti Phytophthora citrophthora dan Xanthomonas citri. Penyakit ini dapat menyerang daun, batang, dan ranting jeruk, menyebabkan luka dan bercak-bercak pada permukaan tanaman. cancer mengganggu pertumbuhan tanaman jeruk, menyebabkan penurunan kualitas dan kuantitas hasil panen. Infeksi yang parah dapat merusak batang dan ranting, menyebabkan pohon menjadi lemah, dan dalam kasus yang sangat serius, dapat menyebabkan pohon mati. Penyakit ini lebih mudah berkembang pada tanaman yang terluka atau dalam kondisi stres, seperti kekurangan air atau pemupukan yang tidak seimbang. Keberadaan patogen di sekitar kebun dan kurangnya perawatan kebun yang baik juga meningkatkan risiko infeksi cancer.',
-                        'symptoms' => 'Gejala utama cancer pada jeruk adalah munculnya luka atau bercak basah yang pada awalnya berwarna kuning atau coklat, yang kemudian berkembang menjadi kerak keras berwarna coklat kehitaman pada batang, cabang, dan ranting. Luka ini biasanya memiliki tepi yang jelas dan bisa menyebar seiring waktu. Pada tanaman yang terinfeksi, daun di sekitar cabang yang terinfeksi akan menguning, menggulung, dan akhirnya gugur. Pada infeksi yang parah, luka pada batang dapat mengganggu aliran air dan nutrisi, yang mengakibatkan penurunan pertumbuhan pohon dan hasil buah yang menurun. Selain itu, pertumbuhan cabang baru akan terhambat, dan tanaman akan menunjukkan gejala stres seperti penurunan ukuran buah dan kualitasnya.',
-                        'solutions' => 'Penyakit cancer pada tanaman jeruk dapat dikendalikan dengan beberapa metode yang efektif:
+                        'description' => 'Canker pada tanaman jeruk disebabkan oleh infeksi bakteri atau jamur, seperti Phytophthora citrophthora dan Xanthomonas citri. Penyakit ini dapat menyerang daun, batang, dan ranting jeruk, menyebabkan luka dan bercak-bercak pada permukaan tanaman. Canker mengganggu pertumbuhan tanaman jeruk, menyebabkan penurunan kualitas dan kuantitas hasil panen. Infeksi yang parah dapat merusak batang dan ranting, menyebabkan pohon menjadi lemah, dan dalam kasus yang sangat serius, dapat menyebabkan pohon mati. Penyakit ini lebih mudah berkembang pada tanaman yang terluka atau dalam kondisi stres, seperti kekurangan air atau pemupukan yang tidak seimbang. Keberadaan patogen di sekitar kebun dan kurangnya perawatan kebun yang baik juga meningkatkan risiko infeksi Canker.',
+                        'symptoms' => 'Gejala utama Canker pada jeruk adalah munculnya luka atau bercak basah yang pada awalnya berwarna kuning atau coklat, yang kemudian berkembang menjadi kerak keras berwarna coklat kehitaman pada batang, cabang, dan ranting. Luka ini biasanya memiliki tepi yang jelas dan bisa menyebar seiring waktu. Pada tanaman yang terinfeksi, daun di sekitar cabang yang terinfeksi akan menguning, menggulung, dan akhirnya gugur. Pada infeksi yang parah, luka pada batang dapat mengganggu aliran air dan nutrisi, yang mengakibatkan penurunan pertumbuhan pohon dan hasil buah yang menurun. Selain itu, pertumbuhan cabang baru akan terhambat, dan tanaman akan menunjukkan gejala stres seperti penurunan ukuran buah dan kualitasnya.',
+                        'solutions' => 'Penyakit Canker pada tanaman jeruk dapat dikendalikan dengan beberapa metode yang efektif:
                             
 Untuk kasus yang tidak terlalu parah:
 • Buang bagian tanaman yang terinfeksi, seperti daun dan ranting yang menunjukkan gejala luka, untuk mengurangi penyebaran infeksi.
@@ -84,9 +84,9 @@ Untuk kasus yang tidak terlalu parah:
 Untuk kasus yang parah:
 • Gunakan bakterisida atau fungisida yang mengandung bahan aktif seperti copper hydroxide atau streptomycin untuk mengendalikan infeksi.
 • Potong semua bagian tanaman yang terinfeksi secara menyeluruh dan buang jauh dari kebun untuk mencegah penyebaran lebih lanjut.
-• Lakukan perawatan dengan pengendalian hayati, menggunakan agen pengendali hayati yang dapat mengurangi populasi bakteri atau jamur penyebab cancer.',
-                        'prevention' => 'Langkah-langkah pencegahan untuk menghindari infeksi cancer pada tanaman jeruk meliputi:
-• Pilih varietas jeruk yang lebih tahan terhadap cancer untuk mengurangi kemungkinan infeksi.
+• Lakukan perawatan dengan pengendalian hayati, menggunakan agen pengendali hayati yang dapat mengurangi populasi bakteri atau jamur penyebab Canker.',
+                        'prevention' => 'Langkah-langkah pencegahan untuk menghindari infeksi Canker pada tanaman jeruk meliputi:
+• Pilih varietas jeruk yang lebih tahan terhadap Canker untuk mengurangi kemungkinan infeksi.
 • Jaga kebersihan kebun dengan membersihkan daun-daun yang gugur dan sisa tanaman lainnya yang dapat menjadi tempat berkembang biak patogen.
 • Lakukan pemangkasan secara teratur untuk mengurangi kelembapan berlebih dan memastikan sirkulasi udara yang baik di sekitar tanaman.
 • Gunakan alat pemangkasan yang steril agar tidak menyebarkan bakteri atau jamur ke bagian tanaman lain.
