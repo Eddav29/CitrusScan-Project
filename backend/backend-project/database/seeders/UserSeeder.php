@@ -14,12 +14,17 @@ class UserSeeder extends Seeder
             [
                 'name' => 'user1',
                 'email' => 'user1@example.com',
-                'password' => bcrypt('user1'),
+                'password' => bcrypt('user1@example.com'),
             ],
             [
                 'name' => 'user2',
-                'email' => 'user@example.com',
-                'password' => bcrypt('puser'),
+                'email' => 'user2@example.com',
+                'password' => bcrypt('user2@example.com'),
+            ],
+            [
+                'name' => 'user3',
+                'email' => 'user3@example.com',
+                'password' => bcrypt('user3@example.com'),
             ]
         ];
 

@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('diseases', function (Blueprint $table) {
             $table->uuid('disease_id')->primary();
             $table->string('name');
-            $table->text('description')->nullable();
             $table->text('treatment')->nullable();
+            $table->string('disease_image')->nullable();
             $table->timestamps();
         });
 
@@ -24,13 +24,16 @@ return new class extends Migration
         Schema::create('disease_treatments', function (Blueprint $table) {
             $table->uuid('disease_treatments_id')->primary();
             $table->uuid('disease_id');
-            $table->integer('step'); // Urutan langkah
-            $table->text('action'); // Deskripsi langkah
+            $table->text('description'); // Deskripsi langkah perawatan
+            $table->text('symptoms'); // Gejala penyakit
+            $table->text('solutions'); // Solusi perawatan
+            $table->text('prevention'); // Pencegahan penyakit
             $table->timestamps();
 
             // Relasi ke tabel diseases
             $table->foreign('disease_id')->references('disease_id')->on('diseases')->onDelete('cascade');
         });
+
 
         // Tabel untuk prediksi penyakit
         Schema::create('predictions', function (Blueprint $table) {

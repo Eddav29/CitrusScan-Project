@@ -34,7 +34,7 @@ Future<void> _handleResetPassword() async {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Password berhasil diubah!"),
-          backgroundColor: Colors.green,
+          backgroundColor: Color(0xFF215C3C),
         ),
       );
       // Navigate to success page

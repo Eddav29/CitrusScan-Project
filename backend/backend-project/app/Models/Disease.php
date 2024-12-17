@@ -15,12 +15,7 @@ class Disease extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = [
-        'disease_id',
-        'name',
-        'description',
-        'treatment',
-    ];
+    protected $fillable = ['disease_id','name', 'treatment', 'disease_image'];
 
     public function treatments()
     {

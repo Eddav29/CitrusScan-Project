@@ -18,8 +18,10 @@ class DiseaseTreatment extends Model
     protected $fillable = [
         'disease_treatments_id',
         'disease_id',
-        'step',
-        'action',
+        'description', 
+        'symptoms',     
+        'solutions',    
+        'prevention',   
     ];
 
     public function disease()

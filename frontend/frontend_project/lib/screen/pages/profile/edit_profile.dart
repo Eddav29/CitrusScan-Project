@@ -1,17 +1,34 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:citrus_scan/screen/common/widgets/navigation_bar.dart';
+import 'package:citrus_scan/data/model/user/user.dart';
+import 'package:citrus_scan/provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends ConsumerStatefulWidget {
+  final User user;
+
+  EditProfileScreen({required this.user});
+
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _nameController =
-      TextEditingController(text: 'Lloyd Haynes');
-  final TextEditingController _emailController =
-      TextEditingController(text: 'callie_parisian@rosenbaum.ca');
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
+  late User _user; // Simpan User di dalam state lokal
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi state lokal _user dengan widget.user
+    _user = widget.user;
+    _nameController.text = _user.name;
+    _emailController.text = _user.email;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +41,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/profile'), // Navigate back to profile
+          onPressed: () =>
+              context.go('/profile'), // Navigasi kembali ke profile
         ),
       ),
       bottomNavigationBar: CustomNavigationBar(),
       body: Stack(
         children: [
-          // Green background at the top
+          // Background hijau di bagian atas
           Container(
             height: 160,
             decoration: BoxDecoration(
@@ -38,18 +56,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
             ),
           ),
-          // Scrollable content
+          // Konten scrollable
           SingleChildScrollView(
             child: Column(
               children: [
-                // Profile Picture Positioned at the border of the green and white card
+                // Gambar profil mengambang di atas card putih
                 SizedBox(height: 80),
                 Center(
                   child: Stack(
-                    clipBehavior:
-                        Clip.none, // Allow overflow for the profile picture
+                    clipBehavior: Clip.none, // Biarkan gambar mengambang
                     children: [
-                      // White Card for Profile Information
+                      // Card putih untuk informasi profil
                       Container(
                         width: MediaQuery.of(context).size.width * 0.9,
                         padding:
@@ -67,45 +84,80 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: Column(
                           children: [
-                            SizedBox(
-                                height:
-                                    40), // Space for the floating profile picture
-                            // Name and Email fields
-                            ProfileField(label: 'Name', controller: _nameController),
+                            SizedBox(height: 40),
+                            // Kolom untuk edit Nama dan Email
+                            ProfileField(
+                                label: 'Name', controller: _nameController),
                             SizedBox(height: 25),
-                            ProfileField(label: 'Email', controller: _emailController),
+                            ProfileField(
+                                label: 'Email', controller: _emailController),
                             SizedBox(height: 35),
-                            // Save button in the middle with the same width as the text fields
+                            // Tombol simpan
                             SizedBox(
-                              width: double.infinity, // Width same as TextField
+                              width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Profile update!')),
-                                  );
+                                onPressed: () async {
+                                  final token =
+                                      await _getToken(); // Ambil token dari SharedPreferences
+
+                                  if (token != null) {
+                                    // Panggil fungsi untuk memperbarui profil
+                                    await ref
+                                        .read(
+                                            profileControllerProvider.notifier)
+                                        .updateProfile(
+                                          token,
+                                          name: _nameController.text,
+                                          email: _emailController.text,
+                                        );
+
+                                    // Setelah berhasil, tampilkan SnackBar
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text('Profile updated!')));
+
+                                    // Update _user dengan salinan baru menggunakan copyWith
+                                    final updatedUser = _user.copyWith(
+                                      name: _nameController.text,
+                                      email: _emailController.text,
+                                    );
+
+                                    // Simpan updatedUser ke SharedPreferences
+                                    await _saveUserToPrefs(updatedUser);
+
+                                    // Ambil user terbaru dari SharedPreferences
+                                    final newUser = await _getUserFromPrefs();
+
+                                    // Navigasi ke ProfileScreen setelah update
+                                    context.go('/profile');
+                                  } else {
+                                    // Tangani jika token tidak ditemukan
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text('Token not found')));
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Color(0xFF215C3C), // Button color
+                                  backgroundColor: Color(0xFF215C3C),
                                   padding: EdgeInsets.symmetric(vertical: 15),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10), // Border radius 10
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
                                 child: Text(
                                   'Save',
-                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      // Profile Picture Floating Above the White Card with Edit Icon
+                      // Foto Profil yang mengambang di atas card putih
                       Positioned(
                         top: -50,
-                        left: MediaQuery.of(context).size.width *
-                            0.33, // Center the image
+                        left: MediaQuery.of(context).size.width * 0.33,
                         child: Stack(
                           children: [
                             CircleAvatar(
@@ -113,8 +165,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               backgroundColor: Colors.white,
                               child: CircleAvatar(
                                 radius: 46,
-                                backgroundImage:
-                                    AssetImage('assets/images/fotoprofile.jpg'),
+                                backgroundImage: _user.profilePicture != null
+                                    ? NetworkImage(_user.profilePicture!)
+                                    : AssetImage(
+                                            'assets/images/fotoprofile.jpg')
+                                        as ImageProvider,
                               ),
                             ),
                             Positioned(
@@ -140,9 +195,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
+
+  // Fungsi untuk mengambil token dari SharedPreferences
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  // Fungsi untuk menyimpan user yang sudah diupdate ke SharedPreferences
+  Future<void> _saveUserToPrefs(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', jsonEncode(user.toJson()));
+  }
+
+  // Fungsi untuk mengambil user dari SharedPreferences
+  Future<User?> _getUserFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
+    }
+    return null;
+  }
 }
 
-// Custom TextField for profile editing similar to the Change Password layout
+// Custom TextField untuk pengeditan profil
 class ProfileField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
@@ -161,15 +238,14 @@ class ProfileField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        // Change border color and text color to green when active
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Color(0xFF215C3C), width: 2),
         ),
-        labelStyle: TextStyle(color: Colors.grey[700]), // Default color
+        labelStyle: TextStyle(color: Colors.grey[700]),
         floatingLabelStyle:
-            TextStyle(color: Color(0xFF215C3C)), // Color when focused
+            TextStyle(color: Color(0xFF215C3C)), // Warna saat fokus
       ),
     );
-  }
+  } 
 }

@@ -1,0 +1,35 @@
+# Abaikan file bytecode Python
+__pycache__/
+*.py[cod]
+
+# Abaikan lingkungan virtual
+venv/
+env/
+.venv/
+.env/
+
+# Abaikan direktori kontrol versi
+.git/
+.gitignore
+
+# Abaikan log
+logs/
+*.log
+
+# Abaikan file sementara
+*.swp
+*.tmp
+*.bak
+*.old
+
+# Abaikan direktori tes
+tests/
+test_images/
+
+
+# Abaikan file Dockerfile dan docker-compose
+Dockerfile
+docker-compose.yml
+
+# Abaikan file lain yang tidak diperlukan
+*.DS_Store

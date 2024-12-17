@@ -38,6 +38,7 @@ class UserHistoryController extends Controller
                 return [
                     'prediction_id' => $historyItem->prediction_id,
                     'disease_name' => $disease ? $disease->name : 'Unknown disease', // Tampilkan "Unknown disease" jika tidak ditemukan
+                    'treatment' => $disease->treatment ?? 'No general treatment available',
                     'created_at' => $historyItem->created_at,
                     'image_path' => asset('storage/' . $historyItem->image_path),
                 ];
@@ -45,46 +46,45 @@ class UserHistoryController extends Controller
         ], 200);
     }
     
-    public function showHistoryDetail($user_id, $user_history_id)
-    {
-        // Validasi apakah user ada
-        $user = User::find($user_id);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-    
-        // Cari riwayat berdasarkan user_id dan prediction_id
-        $history = UserHistory::with(['prediction.disease.treatments'])
-            ->where('user_id', $user_id)
-            ->where('prediction_id', $user_history_id)
-            ->first();
-    
-        if (!$history) {
-            return response()->json(['message' => 'History not found for this user'], 404);
-        }
-    
-        // Format respon JSON untuk detail history
-        $disease = $history->prediction->disease;
-    
-        return response()->json([
-            'message' => 'History detail retrieved successfully',
-            'data' => [
-                'disease_name' => $disease->name ?? 'Unknown Disease',
-                'confidence' => $history->prediction->confidence ?? null,
-                'image_path' => asset('storage/' . $history->image_path),
-                'description' => $disease->description ?? 'No description available',
-                'treatment' => $disease->treatment ?? 'No general treatment available',
-                'steps' => $disease->treatments->map(function ($treatment) {
-                    return [
-                        'step' => $treatment->step,
-                        'action' => $treatment->action,
-                    ];
-                }),
-                'created_at' => $history->created_at->toDateTimeString(),
-            ],
-        ], 200);
+    public function showHistoryDetail($user_id, $prediction_id)
+{
+    // Validate if the user exists
+    $user = User::find($user_id);
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
     }
-    
 
+    // Find the history by user_id and prediction_id
+    $history = UserHistory::with(['prediction.disease.treatments'])
+        ->where('user_id', $user_id)
+        ->where('prediction_id', $prediction_id)
+        ->first();
+
+    if (!$history) {
+        return response()->json(['message' => 'History not found for this user'], 404);
+    }
+
+    // Format the response for the detailed history
+    $disease = $history->prediction->disease;
+
+    return response()->json([
+        'message' => 'History detail retrieved successfully',
+        'data' => [
+            'disease_name' => $disease->name ?? 'Unknown Disease',
+            'confidence' => $history->prediction->confidence ?? null,
+            'image_path' => asset('storage/' . $history->image_path),
+            'treatment' => $disease->treatment ?? 'No general treatment available',
+            'steps' => $disease->treatments->map(function ($treatment) {
+                return [
+                    'description' => $treatment->description,
+                    'symptoms' => $treatment->symptoms,
+                    'solutions' => $treatment->solutions,
+                    'prevention' => $treatment->prevention,
+                ];
+            }),
+            'created_at' => $history->created_at->toDateTimeString(),
+        ],
+    ], 200);
+}
 
 }

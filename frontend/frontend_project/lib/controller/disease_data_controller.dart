@@ -1,35 +1,35 @@
-import 'package:citrus_scan/provider/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
 import 'package:citrus_scan/data/datasource/disease_data_api.dart';
+import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
+import 'package:citrus_scan/data/model/disease_data/disease_data_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DiseaseDataController extends StateNotifier<DiseaseDataState> {
   final DiseaseDataApi _diseaseDataApi;
 
-  DiseaseDataController(this._diseaseDataApi) : super(DiseaseDataState());
+  DiseaseDataController(this._diseaseDataApi)
+      : super(const DiseaseDataInitial());
 
+  // Fetch list of diseases
   Future<void> fetchDiseases() async {
     try {
-      state = state.copyWith(isLoading: true);
-      final diseaseDataList = await _diseaseDataApi.getDiseases();
-      state = state.copyWith(diseaseDataList: diseaseDataList, isLoading: false);
+      state = const DiseaseDataLoading();
+      final diseases = await _diseaseDataApi.getDiseases();
+      state = DiseaseDataListSuccess(diseases);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = DiseaseDataError(e.toString());
     }
   }
 
-  Future<void> fetchDiseaseDetails(int id) async {
+  // Fungsi untuk mengambil detail penyakit beserta langkah-langkah perawatannya
+  Future<void> fetchDiseaseDetails(String id) async {
     try {
-      state = state.copyWith(isLoading: true);
-      final diseaseData = await _diseaseDataApi.getDiseaseDetails(id);
-      state = state.copyWith(diseaseData: diseaseData, isLoading: false);
+      state = const DiseaseDataLoading();
+      final diseaseDetail = await _diseaseDataApi.getDiseaseDetails(id);
+
+      // Memperbarui state dengan detail penyakit
+      state = DiseaseDataDetailSuccess(diseaseDetail);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = DiseaseDataError(e.toString());
     }
   }
 }
-
-final diseaseDataControllerProvider = StateNotifierProvider<DiseaseDataController, DiseaseDataState>((ref) {
-  final diseaseDataApi = ref.watch(diseaseDataApiProvider);
-  return DiseaseDataController(diseaseDataApi);
-});

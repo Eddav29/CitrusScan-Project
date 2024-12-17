@@ -67,34 +67,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (value == null || value.isEmpty) {
       return 'Password tidak boleh kosong';
     }
-    if (value.length < 6) {
-      return 'Password minimal 6 karakter';
+    if (value.length < 8) {
+      return 'Password minimal 8 karakter';
     }
     return null;
   }
 
-  Future<void> _handleGoogleLogin() async {
-    setState(() => _isLoading = true);
+  // Future<void> _handleGoogleLogin() async {
+  //   setState(() => _isLoading = true);
 
-    try {
-      await ref.read(authControllerProvider.notifier).loginWithGoogle();
-      if (mounted) {
-        context.go('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google Login gagal: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
+  //   try {
+  //     await ref.read(authControllerProvider.notifier).loginWithGoogle();
+  //     if (mounted) {
+  //       context.go('/home');
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Google Login gagal: $e'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     setState(() => _isLoading = false);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +182,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       validator: _validateEmail,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Color(0xFF215C3C)),
+                        prefixIcon:
+                            Icon(Icons.person, color: Color(0xFF215C3C)),
                         hintText: "Email Pengguna",
                         fillColor: Color(0xFF215C3C).withOpacity(0.1),
                         filled: true,
@@ -204,7 +204,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         prefixIcon: Icon(Icons.lock, color: Color(0xFF215C3C)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: Color(0xFF215C3C),
                           ),
                           onPressed: () {
@@ -244,7 +246,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                             context.go('/resetPassword');
+                            context.go('/resetPassword');
                           },
                           child: Text(
                             "Lupa Sandi?",
@@ -287,34 +289,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     SizedBox(height: 20),
 
-                   // Google Login Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _isLoading ? null : _handleGoogleLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(color: Color(0xFF215C3C)),
-                          ),
-                        ),
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          height: 24,
-                          width: 24,
-                        ),
-                        label: Text(
-                          "Login with Google",
-                          style: TextStyle(
-                            color: Color(0xFF215C3C),
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                    //  // Google Login Button
+                    //   SizedBox(
+                    //     width: double.infinity,
+                    //     child: ElevatedButton.icon(
+                    //       onPressed: _isLoading ? null : _handleGoogleLogin,
+                    //       style: ElevatedButton.styleFrom(
+                    //         backgroundColor: Colors.white,
+                    //         padding: EdgeInsets.symmetric(vertical: 16),
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(10),
+                    //           side: BorderSide(color: Color(0xFF215C3C)),
+                    //         ),
+                    //       ),
+                    //       icon: Image.asset(
+                    //         'assets/images/google.png',
+                    //         height: 24,
+                    //         width: 24,
+                    //       ),
+                    //       label: Text(
+                    //         "Login with Google",
+                    //         style: TextStyle(
+                    //           color: Color(0xFF215C3C),
+                    //           fontSize: 16,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   SizedBox(height: 20),
 
                     // Sign Up Link
                     Row(

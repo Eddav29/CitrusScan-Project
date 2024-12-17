@@ -19,7 +19,7 @@ class UserHistorySeeder extends Seeder
                     'user_histories_id' => Str::uuid(),
                     'user_id' => $user_id,
                     'prediction_id' => $prediction_id,
-                    'image_path' => 'path/to/image.jpg',
+                    'image_path' => 'uploads/black-spot.jpg',
                     'created_at' => now(),
                 ]);
             }

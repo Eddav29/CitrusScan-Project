@@ -1,3 +1,4 @@
+import 'package:citrus_scan/data/model/user/user.dart';
 import 'package:citrus_scan/provider/provider.dart';
 import 'package:citrus_scan/screen/pages/auth/login_screen.dart';
 import 'package:citrus_scan/screen/pages/password/enter_new_password.dart';
@@ -76,8 +77,11 @@ class CitrusScanApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/profileEdit',
-          builder: (context, state) =>
-              EditProfileScreen(), // Tambahkan rute ke layar ScanResultScreen
+          builder: (context, state) {
+            final user = state.extra as User; // Gunakan casting yang aman
+            return EditProfileScreen(
+                user: user); // Menangani null jika data tidak ada
+          },
         ),
         GoRoute(
           path: '/changePassword',
@@ -92,11 +96,11 @@ class CitrusScanApp extends StatelessWidget {
             path: '/pageOTP',
             builder: (context, state) => VerificationCodeScreen() //
             ),
-         GoRoute(
+        GoRoute(
             path: '/newPassword',
             builder: (context, state) => EnterNewPasswordScreen() //
             ),
-         GoRoute(
+        GoRoute(
             path: '/succes',
             builder: (context, state) => SuccessChangePasswordScreen() //
             ),

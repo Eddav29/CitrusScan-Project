@@ -1,29 +1,31 @@
 import 'package:citrus_scan/data/model/disease_data/disease_data.dart';
 
-class DiseaseDataState {
-  final DiseaseData? diseaseData;
-  final List<DiseaseData>? diseaseDataList;
-  final bool isLoading;
-  final String? error;
+abstract class DiseaseDataState {
+  const DiseaseDataState();
+}
 
-  DiseaseDataState({
-    this.diseaseData,
-    this.diseaseDataList,
-    this.isLoading = false,
-    this.error,
-  });
+class DiseaseDataInitial extends DiseaseDataState {
+  const DiseaseDataInitial();
+}
 
-  DiseaseDataState copyWith({
-    DiseaseData? diseaseData,
-    List<DiseaseData>? diseaseDataList,
-    bool? isLoading,
-    String? error,
-  }) {
-    return DiseaseDataState(
-      diseaseData: diseaseData ?? this.diseaseData,
-      diseaseDataList: diseaseDataList ?? this.diseaseDataList,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
-  }
+class DiseaseDataLoading extends DiseaseDataState {
+  const DiseaseDataLoading();
+}
+
+class DiseaseDataListSuccess extends DiseaseDataState {
+  final List<DiseaseData> diseases;
+
+  const DiseaseDataListSuccess(this.diseases);
+}
+
+class DiseaseDataDetailSuccess extends DiseaseDataState {
+  final DiseaseData diseaseDetail;
+
+  const DiseaseDataDetailSuccess(this.diseaseDetail);
+}
+
+class DiseaseDataError extends DiseaseDataState {
+  final String message;
+
+  const DiseaseDataError(this.message);
 }

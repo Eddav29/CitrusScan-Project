@@ -6,6 +6,7 @@ use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\PredictionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserHistoryController;
+use App\Http\Controllers\EmailVerificationController;
 
 Route::get('/test-connection', function () {
     return response()->json([
@@ -30,7 +31,8 @@ Route::put('/profile', [AuthenticatedSessionController::class, 'updateProfile'])
 
 // Route untuk mengupdate password pengguna yang sedang login
 Route::put('/update-password', [AuthenticatedSessionController::class, 'updatePassword']);
-
+//route untuk edit profile picture
+Route::put('/update-profile-picture', [AuthenticatedSessionController::class, 'updateProfilePicture']);
 // Route untuk mengambil data penyakit
 Route::get('/diseases', [DiseaseController::class, 'index']);
 Route::get('/diseases/{id}', [DiseaseController::class, 'show']);
@@ -42,4 +44,8 @@ Route::post('/predict', [PredictionController::class, 'predict']);
 Route::get('/user-history/{user_id}', [UserHistoryController::class, 'showHistory']);
 
 //Route untuk melihat detail riwayat
-Route::get('/user-history/{user_id}/history/{user_history_id}', [UserHistoryController::class, 'showHistoryDetail']);
+Route::get('/user-history/{user_id}/history/{prediction_id}', [UserHistoryController::class, 'showHistoryDetail']);
+
+//Route untuk mengirim email 
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationNotification']);
+
