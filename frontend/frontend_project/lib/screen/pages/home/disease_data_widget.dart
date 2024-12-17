@@ -54,7 +54,7 @@ class _DiseaseDataWidgetState extends ConsumerState<DiseaseDataWidget> {
                 errorBuilder: (context, error, stackTrace) {
                   // Fallback image if loading fails
                   return Center(
-                    child: Icon(Icons.error, size: 50, color: Colors.red),
+                    child: Icon(Icons.image, size: 50, color: Colors.grey),
                   );
                 },
               ),

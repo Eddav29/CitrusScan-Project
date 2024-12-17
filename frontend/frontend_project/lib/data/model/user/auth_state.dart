@@ -1,4 +1,3 @@
-
 import 'package:citrus_scan/data/model/user/user.dart';
 
 class AuthState {
@@ -24,7 +23,7 @@ class AuthState {
       user: user ?? this.user,
       token: token ?? this.token,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: error ?? this.error,
     );
   }
 

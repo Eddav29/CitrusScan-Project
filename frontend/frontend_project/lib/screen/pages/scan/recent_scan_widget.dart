@@ -1,92 +1,128 @@
 import 'package:flutter/material.dart';
-import 'scan_result_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/controller/history_controller.dart';
+import 'package:citrus_scan/data/model/history/history.dart';
+import 'package:citrus_scan/data/model/history/history_state.dart';
+import 'package:citrus_scan/screen/pages/history/history_detail_screen.dart';
+import 'package:intl/intl.dart';
 
-class RecentScanWidget extends StatelessWidget {
+class RecentScanWidget extends ConsumerStatefulWidget {
+  final String userId;
+
+  const RecentScanWidget({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  _RecentScanWidgetState createState() => _RecentScanWidgetState();
+}
+
+class _RecentScanWidgetState extends ConsumerState<RecentScanWidget> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(historyControllerProvider.notifier)
+          .fetchUserHistory(widget.userId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 10),
-        // Kartu Riwayat Scan
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: GestureDetector(
-            onTap: () {
-              // Arahkan ke halaman ScanResultScreen saat kartu diklik
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ScanResultScreen(
-                          imagePath: '',
-                        )),
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xFF215C3C)
-                    .withOpacity(0.1), // Warna hijau transparan
-                borderRadius: BorderRadius.circular(12), // Sudut melengkung
+    final historyState = ref.watch(historyControllerProvider);
+
+    if (historyState is HistoryLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (historyState is HistoryError) {
+      print("History Error: ${historyState.message}");
+      return Center(child: Text('Tidak ada riwayat scan terbaru'));
+    }
+
+    if (historyState is HistorySuccess && historyState.histories.isNotEmpty) {
+      final recentHistory = historyState.histories.first;
+      return _buildScanHistoryCard(context, historyItem: recentHistory);
+    }
+
+    return Center(child: Text('Tidak ada riwayat terbaru'));
+  }
+
+  Widget _buildScanHistoryCard(
+    BuildContext context, {
+    required History historyItem,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailHistoryScreen(
+              userId: widget.userId,
+              predictionId: historyItem.predictionId,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF215C3C).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                historyItem.imagePath,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    size: 80,
+                    color: Colors.grey),
               ),
-              padding: EdgeInsets.all(16),
-              margin: EdgeInsets.only(
-                  bottom:
-                      16), // Menambahkan margin bawah untuk jarak antar item
-              child: Row(
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Gambar hasil scan
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      'assets/images/jeruknipis.jpeg',
-                      width:
-                          80, // Sesuaikan dengan ukuran gambar di ScanHistoryScreen
-                      height:
-                          80, // Sesuaikan dengan ukuran gambar di ScanHistoryScreen
-                      fit: BoxFit.cover, // Menjaga proporsi gambar
+                  Text(
+                    historyItem.diseaseName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(width: 16), // Jarak antara gambar dan teks
-                  // Kolom untuk menampilkan teks di sebelah kanan
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Jeruk Nipis', // Nama produk
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black, // Warna font hitam
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // Keterangan tambahan
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors
-                                .black54, // Warna hitam dengan transparansi
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          '10 Okt 2024', // Tanggal scan
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors
-                                .black54, // Warna font hitam dengan transparansi
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 4),
+                  Text(
+                    historyItem.treatment,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    DateFormat('HH:mm:ss dd MMM yyyy')
+                        .format(historyItem.createdAt),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
