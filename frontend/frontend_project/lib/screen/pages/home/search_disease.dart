@@ -84,7 +84,7 @@ class _SearchDiseaseScreenState extends ConsumerState<SearchDiseaseScreen> {
                             controller: _searchController,
                             onChanged: _onSearch,
                             decoration: InputDecoration(
-                              hintText: 'Cari Penyakit',
+                              hintText: 'Masukkan nama penyakit',
                               border: InputBorder.none,
                             ),
                           ),
