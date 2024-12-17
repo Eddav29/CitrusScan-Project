@@ -1,4 +1,3 @@
-import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../common/widgets/navigation_bar.dart';
@@ -6,9 +5,10 @@ import 'tips_widget.dart';
 import '../scan/recent_scan_widget.dart';
 import '../../common/widgets/app_bar.dart';
 import '../history/scan_history_screen.dart';
-import '../search/search_disease.dart';
+import 'search_disease.dart';
 import 'package:go_router/go_router.dart';
 import 'disease_data_widget.dart';
+import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

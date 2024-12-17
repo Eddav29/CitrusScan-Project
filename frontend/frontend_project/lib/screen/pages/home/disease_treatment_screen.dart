@@ -60,7 +60,7 @@ class _DiseaseTreatmentScreenState extends State<DiseaseTreatmentScreen> {
                           child: Icon(Icons.error, size: 50, color: Colors.red))
                       : Image.network(
                           "http://10.0.2.2:8000/storage/${_diseaseData.diseaseImage}",
-                          height: screenHeight * 0.45,
+                          height: screenHeight * 0.4,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
@@ -74,7 +74,7 @@ class _DiseaseTreatmentScreenState extends State<DiseaseTreatmentScreen> {
             ],
           ),
           Positioned(
-            top: screenHeight * 0.4,
+            top: screenHeight * 0.35,
             left: 0,
             right: 0,
             bottom: 0,
@@ -115,8 +115,14 @@ class _DiseaseTreatmentScreenState extends State<DiseaseTreatmentScreen> {
                                 CircleAvatar(
                                   radius: 30,
                                   backgroundColor: Colors.grey[200],
-                                  child: Icon(Icons.bug_report,
-                                      size: 30, color: Colors.white),
+                                  child: ClipOval(
+                                    child: Image.asset(
+                                      'assets/images/citrus.png',
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
@@ -211,51 +217,6 @@ class _DiseaseTreatmentScreenState extends State<DiseaseTreatmentScreen> {
             ),
           )
         ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF215C3C),
-                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: Size(0, 56),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.center_focus_strong,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Deteksi Lagi',
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
