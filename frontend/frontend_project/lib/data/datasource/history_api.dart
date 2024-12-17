@@ -30,22 +30,19 @@ class HistoryApi {
   }
 
   Future<HistoryDetail> fetchUserHistoryDetail(
-      String userId, String historyId) async {
+      String userId, String predictionId) async {
     try {
-      final response = await _dio.get('/user/$userId/history/$historyId');
+      final response =
+          await _dio.get('/user-history/$userId/history/$predictionId');
       final data = response.data['data'];
 
       return HistoryDetail(
         diseaseName: data['disease_name'],
         confidence: data['confidence']?.toDouble(),
         imagePath: data['image_path'],
-        description: data['description'],
         treatment: data['treatment'],
         steps: (data['steps'] as List)
-            .map((step) => TreatmentStep(
-                  step: step['step'],
-                  action: step['action'],
-                ))
+            .map((step) => TreatmentStep.fromJson(step))
             .toList(),
         createdAt: data['created_at'],
       );

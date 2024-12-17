@@ -1,5 +1,5 @@
 class History {
-  final int predictionId;
+  final String predictionId;
   final String diseaseName;
   final String treatment;
   final DateTime createdAt;
@@ -14,14 +14,17 @@ class History {
   });
 
   factory History.fromJson(Map<String, dynamic> json) {
+    var predictionId = json['prediction_id'];
+
+    if (predictionId == null || predictionId is! String) {
+      print('Invalid prediction_id: $predictionId');
+      predictionId = '';
+    }
+
     return History(
-      predictionId: json['prediction_id'] is String
-          ? int.tryParse(json['prediction_id']) ?? 0
-          : (json['prediction_id'] as int? ?? 0),
-      diseaseName: json['disease_name'] ??
-          'Unknown Disease', 
-      treatment: json['treatment'] ??
-          'No Treatment', 
+      predictionId: predictionId,
+      diseaseName: json['disease_name'] ?? 'Unknown Disease',
+      treatment: json['treatment'] ?? 'No Treatment',
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
@@ -42,9 +45,8 @@ class History {
 
 class HistoryDetail {
   final String diseaseName;
-  final double? confidence;
+  final double confidence;
   final String imagePath;
-  final String description;
   final String treatment;
   final List<TreatmentStep> steps;
   final String createdAt;
@@ -53,7 +55,6 @@ class HistoryDetail {
     required this.diseaseName,
     required this.confidence,
     required this.imagePath,
-    required this.description,
     required this.treatment,
     required this.steps,
     required this.createdAt,
@@ -68,7 +69,6 @@ class HistoryDetail {
       diseaseName: json['disease_name'],
       confidence: json['confidence'],
       imagePath: json['image_path'],
-      description: json['description'],
       treatment: json['treatment'],
       steps: stepsList,
       createdAt: json['created_at'],
@@ -80,7 +80,6 @@ class HistoryDetail {
       'disease_name': diseaseName,
       'confidence': confidence,
       'image_path': imagePath,
-      'description': description,
       'treatment': treatment,
       'steps': steps.map((step) => step.toJson()).toList(),
       'created_at': createdAt,
@@ -89,25 +88,33 @@ class HistoryDetail {
 }
 
 class TreatmentStep {
-  final String step;
-  final String action;
+  final String description;
+  final String symptoms;
+  final String solutions;
+  final String prevention;
 
   TreatmentStep({
-    required this.step,
-    required this.action,
+    required this.description,
+    required this.symptoms,
+    required this.solutions,
+    required this.prevention,
   });
 
   factory TreatmentStep.fromJson(Map<String, dynamic> json) {
     return TreatmentStep(
-      step: json['step'],
-      action: json['action'],
+      description: json['description'] ?? '',
+      symptoms: json['symptoms'] ?? '',
+      solutions: json['solutions'] ?? '',
+      prevention: json['prevention'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'step': step,
-      'action': action,
+      'description': description,
+      'symptoms': symptoms,
+      'solutions': solutions,
+      'prevention': prevention,
     };
   }
 }

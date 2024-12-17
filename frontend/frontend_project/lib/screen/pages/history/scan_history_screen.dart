@@ -1,3 +1,4 @@
+import 'package:citrus_scan/screen/pages/history/history_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/widgets/navigation_bar.dart';
@@ -101,7 +102,7 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
                     child: TextField(
                       controller: searchController,
                       decoration: InputDecoration(
-                        hintText: 'Cari riwayat',
+                        hintText: 'Cari nama penyakit',
                         hintStyle:
                             TextStyle(fontSize: 14, color: Colors.black45),
                         border: InputBorder.none,
@@ -151,7 +152,24 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
   }) {
     return GestureDetector(
       onTap: () {
-        // Navigate to scan detail screen if needed
+        final userId = ref.read(authControllerProvider).user!.userId;
+
+        final predictionId = historyItem.predictionId;
+        print('Prediction ID: $predictionId');
+
+        if (predictionId != 0) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailHistoryScreen(
+                userId: userId,
+                predictionId: predictionId.toString(),
+              ),
+            ),
+          );
+        } else {
+          print('Invalid predictionId: $predictionId');
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -179,20 +197,20 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
                 children: [
                   Text(
                     historyItem.diseaseName,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis, // Prevent overflow
                   ),
                   SizedBox(height: 4),
                   Text(
-                    historyItem.imagePath,
+                    historyItem.treatment,
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                    softWrap: true,
+                    maxLines: null,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    DateFormat('dd MMM yyyy').format(historyItem.createdAt),
                     style: TextStyle(fontSize: 14, color: Colors.black54),
-                    overflow: TextOverflow.ellipsis, // Prevent overflow
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    DateFormat('dd/MM/yyyy')
-                        .format(historyItem.createdAt), // Format the DateTime
-                    style: TextStyle(fontSize: 15, color: Colors.black54),
                   ),
                 ],
               ),

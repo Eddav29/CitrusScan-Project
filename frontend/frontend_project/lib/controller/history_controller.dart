@@ -25,11 +25,11 @@ class HistoryController extends StateNotifier<HistoryState> {
     }
   }
 
-  Future<void> fetchHistoryDetail(String userId, String historyId) async {
+  Future<void> fetchHistoryDetail(String userId, String predictionId) async {
     try {
       state = const HistoryLoading();
       final detail =
-          await _historyApi.fetchUserHistoryDetail(userId, historyId);
+          await _historyApi.fetchUserHistoryDetail(userId, predictionId);
       state = HistoryDetailSuccess(detail);
     } catch (e) {
       state = HistoryError(e.toString());

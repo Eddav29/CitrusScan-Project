@@ -44,7 +44,7 @@ Route::post('/predict', [PredictionController::class, 'predict']);
 Route::get('/user-history/{user_id}', [UserHistoryController::class, 'showHistory']);
 
 //Route untuk melihat detail riwayat
-Route::get('/user-history/{user_id}/history/{user_history_id}', [UserHistoryController::class, 'showHistoryDetail']);
+Route::get('/user-history/{user_id}/history/{prediction_id}', [UserHistoryController::class, 'showHistoryDetail']);
 
 //Route untuk mengirim email 
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationNotification']);
