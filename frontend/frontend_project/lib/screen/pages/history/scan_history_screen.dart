@@ -14,8 +14,8 @@ class ScanHistoryScreen extends ConsumerStatefulWidget {
 
 class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
   TextEditingController searchController = TextEditingController();
-  List<bool> selectedItems = [];
-  String sortBy = 'tanggal';
+  List<History> filteredHistories = []; // Daftar history hasil filter
+  String sortBy = 'tanggal'; // Default sortir by tanggal
 
   @override
   void initState() {
@@ -29,24 +29,19 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
           await ref
               .read(historyControllerProvider.notifier)
               .fetchUserHistory(userId);
+          _filterSearchResults(); // Inisialisasi filter dengan semua data
         } catch (e) {
           if (e.toString().contains('Unauthorized')) {
-            // Handle unauthorized - redirect to login
             ref.read(authControllerProvider.notifier).logout();
             Navigator.of(context).pushReplacementNamed('/login');
           }
         }
       } else {
-        print("User not logged in");
         Navigator.of(context).pushReplacementNamed('/login');
       }
     });
-  }
 
-  void _filterSearchResults() {
-    setState(() {
-      // Update logic for search results
-    });
+    searchController.addListener(_filterSearchResults);
   }
 
   @override
@@ -56,25 +51,44 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
     super.dispose();
   }
 
+  void _filterSearchResults() {
+    final historyState = ref.read(historyControllerProvider);
+    if (historyState is HistorySuccess) {
+      final keyword = searchController.text.toLowerCase();
+      setState(() {
+        filteredHistories = historyState.histories
+            .where((history) =>
+                history.diseaseName.toLowerCase().contains(keyword))
+            .toList();
+        _sortHistories(); // Terapkan sortir setelah filter
+      });
+    }
+  }
+
+  void _sortHistories() {
+    setState(() {
+      if (sortBy == 'tanggal') {
+        filteredHistories.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      } else if (sortBy == 'nama') {
+        filteredHistories.sort((a, b) =>
+            a.diseaseName.toLowerCase().compareTo(b.diseaseName.toLowerCase()));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
     final historyState = ref.watch(historyControllerProvider);
-    print('History: $historyState');
 
-    final user = authState.user;
-    final histories =
-        (historyState is HistorySuccess) ? historyState.histories : [];
-
-    // Ensure selectedItems has the same length as histories
-    if (selectedItems.length != histories.length) {
-      selectedItems = List.generate(histories.length, (index) => false);
+    if (filteredHistories.isEmpty && historyState is HistorySuccess) {
+      filteredHistories = historyState.histories;
+      _sortHistories();
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Riwayat Deteksi',
+          'Riwayat Scan',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color(0xFF215C3C),
@@ -85,59 +99,103 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Search bar
-            Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Icon(Icons.search, color: Colors.grey),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari nama penyakit',
-                        hintStyle:
-                            TextStyle(fontSize: 14, color: Colors.black45),
-                        border: InputBorder.none,
-                      ),
+            // Search bar + Sort button
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Icon(Icons.search, color: Colors.grey),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Cari nama penyakit',
+                              hintStyle: TextStyle(
+                                  fontSize: 14, color: Colors.black45),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.clear, color: Colors.grey),
+                          onPressed: () {
+                            setState(() {
+                              searchController.clear();
+                              _filterSearchResults();
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.clear, color: Colors.grey),
-                    onPressed: () {
-                      setState(() {
-                        searchController.clear();
-                      });
-                    },
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(width: 8),
+                // Sort Icon
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.sort, color: Colors.grey),
+                  onSelected: (value) {
+                    setState(() {
+                      sortBy = value;
+                      _sortHistories();
+                    });
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'tanggal',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Tanggal'),
+                          if (sortBy == 'tanggal')
+                            Icon(Icons.check, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'nama',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Nama'),
+                          if (sortBy == 'nama')
+                            Icon(Icons.check, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(height: 16),
-            // Displaying scan history
+            // Displaying filtered scan history
             Expanded(
               child: historyState is HistoryLoading
                   ? Center(child: CircularProgressIndicator())
                   : historyState is HistoryError
-                      ? Center(child: Text('Error: ${historyState.message}'))
-                      : ListView.builder(
-                          itemCount: histories.length,
-                          itemBuilder: (context, index) {
-                            final historyItem = histories[index];
-                            return _buildScanHistoryCard(
-                              context,
-                              historyItem: historyItem,
-                              isSelected: selectedItems[index],
-                            );
-                          },
-                        ),
+                      ? Center(child: Text('Tidak ada riwayat scan'))
+                      : filteredHistories.isEmpty
+                          ? Center(child: Text('Tidak ada data ditemukan'))
+                          : ListView.builder(
+                              itemCount: filteredHistories.length,
+                              itemBuilder: (context, index) {
+                                final historyItem = filteredHistories[index];
+                                return _buildScanHistoryCard(
+                                  context,
+                                  historyItem: historyItem,
+                                  isSelected: false,
+                                );
+                              },
+                            ),
             ),
           ],
         ),
@@ -153,10 +211,7 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
     return GestureDetector(
       onTap: () {
         final userId = ref.read(authControllerProvider).user!.userId;
-
         final predictionId = historyItem.predictionId;
-        print('Prediction ID: $predictionId');
-
         if (predictionId != 0) {
           Navigator.push(
             context,
@@ -167,8 +222,6 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
               ),
             ),
           );
-        } else {
-          print('Invalid predictionId: $predictionId');
         }
       },
       child: Container(
@@ -187,10 +240,12 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.broken_image, size: 80, color: Colors.grey);
+                },
               ),
             ),
             SizedBox(width: 16),
-            // Use Expanded to avoid text overflow
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,30 +253,24 @@ class _ScanHistoryScreenState extends ConsumerState<ScanHistoryScreen> {
                   Text(
                     historyItem.diseaseName,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis, // Prevent overflow
+                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4),
                   Text(
                     historyItem.treatment,
                     style: TextStyle(fontSize: 12, color: Colors.black54),
-                    softWrap: true,
-                    maxLines: null,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4),
                   Text(
-                    DateFormat('dd MMM yyyy').format(historyItem.createdAt),
+                    DateFormat('HH:mm:ss dd MMM yyyy')
+                        .format(historyItem.createdAt),
                     style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],
               ),
             ),
-            if (isSelected)
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  // Handle delete history item
-                },
-              ),
           ],
         ),
       ),

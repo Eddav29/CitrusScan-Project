@@ -56,6 +56,7 @@ class AuthController extends StateNotifier<AuthState> {
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
+      print("Login error: $e");
     }
   }
 

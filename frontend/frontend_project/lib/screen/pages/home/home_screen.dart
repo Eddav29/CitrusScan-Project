@@ -1,5 +1,5 @@
+import 'package:citrus_scan/provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../common/widgets/navigation_bar.dart';
 import 'tips_widget.dart';
 import '../scan/recent_scan_widget.dart';
@@ -9,82 +9,30 @@ import 'search_disease.dart';
 import 'package:go_router/go_router.dart';
 import 'disease_data_widget.dart';
 import 'package:citrus_scan/screen/pages/scan/scan_result_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:citrus_scan/controller/auth_controller.dart';
+import '../scan/recent_scan_widget.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  Color appBarColor = Colors.transparent;
-
-  // Widget untuk setiap kartu penyakit
-  Widget _buildDiseaseCard(String name, String imagePath) {
-    return GestureDetector(
-      onTap: () {
-        // Navigasi ke halaman scan hasil dan kirimkan imagePath
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ScanResultScreen(imagePath: imagePath),
-          ),
-        );
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.only(bottom: 16),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-            Positioned(
-              bottom: 8,
-              left: 8,
-              right: 8,
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 2,
-                      color: Color(0xFF215C3C).withOpacity(0.5),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authControllerProvider);
+
+    // Ambil userId dari AuthState
+    final userId = authState.user?.userId;
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: appBarColor,
+            backgroundColor: Colors.transparent,
             expandedHeight: 70.0,
             floating: false,
             pinned: false,
             flexibleSpace: FlexibleSpaceBar(
-              background: CustomAppBar(backgroundColor: appBarColor),
+              background: CustomAppBar(backgroundColor: Colors.transparent),
             ),
           ),
           SliverToBoxAdapter(
@@ -131,28 +79,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  // Teks selamat datang
                   Text(
                     "Selamat datang di CitrusScan, solusi untuk mendeteksi dan menganalisis jeruk dengan cepat dan mudah.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Gilroy',
-                    ),
+                    style: TextStyle(fontSize: 16, fontFamily: 'Gilroy'),
                   ),
                   SizedBox(height: 20),
-                  // Widget tips
                   TipsWidget(),
                   SizedBox(height: 20),
-                  // Riwayat scan terakhir
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Riwayat Deteksi Terakhir",
+                        "Riwayat Scan Terakhir",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
                           fontFamily: 'Gilroy',
                         ),
                       ),
@@ -176,7 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  RecentScanWidget(),
+                  // Kirim userId ke RecentScanWidget
+                  userId != null
+                      ? RecentScanWidget(userId: userId)
+                      : Center(
+                          child:
+                              Text('Silakan login untuk melihat riwayat scan')),
                   SizedBox(height: 20),
                   DiseaseDataWidget(),
                 ],
