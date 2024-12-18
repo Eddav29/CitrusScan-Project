@@ -37,7 +37,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF215C3C),
         elevation: 0,
-        title: Text('Edit Profile', style: TextStyle(color: Colors.white)),
+        title: Text('Edit Profil', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -87,7 +87,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             SizedBox(height: 40),
                             // Kolom untuk edit Nama dan Email
                             ProfileField(
-                                label: 'Name', controller: _nameController),
+                                label: 'Nama', controller: _nameController),
                             SizedBox(height: 25),
                             ProfileField(
                                 label: 'Email', controller: _emailController),
@@ -247,5 +247,5 @@ class ProfileField extends StatelessWidget {
             TextStyle(color: Color(0xFF215C3C)), // Warna saat fokus
       ),
     );
-  } 
+  }
 }
