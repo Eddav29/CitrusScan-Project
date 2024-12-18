@@ -77,7 +77,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           onPressed: () => context.go('/profile'), // Navigate back to profile
         ),
         title: Text(
-          'Change Password',
+          'Ganti Kata Sandi',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -118,7 +118,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   children: [
                     // Old Password Field
                     PasswordField(
-                      label: 'Old Password',
+                      label: 'Kata Sandi Lama',
                       controller: _oldPasswordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -130,7 +130,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                     SizedBox(height: 10),
                     // New Password Field
                     PasswordField(
-                      label: 'New Password',
+                      label: 'Kata Sandi Baru',
                       controller: _newPasswordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -145,7 +145,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                     SizedBox(height: 10),
                     // Confirm Password Field
                     PasswordField(
-                      label: 'Confirm Password',
+                      label: 'Konfimasi Kata Sandi Baru',
                       controller: _confirmPasswordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -176,7 +176,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                               )
                             : Text(
                                 'Save',
-                                style: TextStyle(fontSize: 16, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
                               ),
                       ),
                     ),
@@ -238,8 +239,7 @@ class _PasswordFieldState extends State<PasswordField> {
           borderSide: BorderSide(color: Color(0xFF215C3C), width: 2),
         ),
         labelStyle: TextStyle(color: Colors.grey[700]),
-        floatingLabelStyle:
-            TextStyle(color: Color(0xFF215C3C)),
+        floatingLabelStyle: TextStyle(color: Color(0xFF215C3C)),
       ),
     );
   }
